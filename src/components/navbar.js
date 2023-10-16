@@ -1,0 +1,69 @@
+"use client";
+
+import Link from 'next/link'
+import React, { useState, useEffect } from 'react';
+
+export default function Navbar() {
+
+    const [searchTerm, setSearchTerm] = useState('');
+    const [suggestions, setSuggestions] = useState([]);
+
+    useEffect(() => {
+        if (searchTerm) {
+            // Ici, fetchez vos suggestions à partir de votre API ou autre source.
+            // Pour cet exemple, utilisons une liste de données factices.
+            const dummyData = ['suggestion1@acadomia.fr', 'suggestion2@acadomia.fr'];
+            setSuggestions(dummyData);
+        } else {
+            setSuggestions([]);
+        }
+    }, [searchTerm]);
+
+    return (
+        <nav className="bg-white p-1 shadow-md">
+            <div className="container mx-auto flex items-center justify-between">
+                <div className="flex items-center">
+                    <img src="/thumbnail_image001-removebg-preview.png" alt="Left Logo" className="h-16 w-auto mr-2" />
+                    <h1 className="text-xl font-bold">So'Thanks Tickets</h1>
+                </div>
+                {/* Searchbar */}
+                <div class="relative w-80 rounded">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                        </svg>
+                    </div>
+                    <input type="search" value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        class="block w-full p-3 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-slate-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="recherche par adresse mail" required
+                    />
+                    {searchTerm && suggestions.length > 0 && (
+                        <div className="absolute mt-2 w-full rounded border border-gray-300 bg-white z-10">
+                            {suggestions.map((suggestion, index) => (
+                                <div key={index} className="p-2 hover:bg-gray-200 cursor-pointer">
+                                    {suggestion}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+                {/* onglets */}
+                <div class="hidden w-full md:block md:w-auto" id="navbar-default">
+                    <ul class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+                        <li>
+                            <Link href="/user" class="text-sm block py-2 pl-3 pr-4 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500" aria-current="page">Acceuil</Link>
+                        </li>
+                        <li className='relative '>
+                            <Link href="/user/tickets-recus" class="text-sm block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Tickets reçus</Link>
+                            <div class="absolute inline-flex items-center justify-center w-6 h-6 text-xs text-white bg-red-500 border-2 border-white rounded-full -top-5 -right-3 dark:border-gray-900">3</div>
+                        </li>
+                        <li>
+                            <Link href="/user/tickets-envoyes" class="text-sm block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Tickets envoyés</Link>
+                        </li>
+                    </ul>
+                </div>
+                <img src="/acad.png" alt="Right Logo" className="h-8 w-auto ml-4" />
+            </div>
+        </nav>
+    )
+}
