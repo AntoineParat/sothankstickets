@@ -13,7 +13,7 @@ export default function Home() {
 
   function checkEmail(event) {
     event.preventDefault();
-    if (email === "paratantoine@gmail.com" && password === "adminpassword") { //mylene.d-rosso@acadomia.fr
+    if (email === "mylene.d-rosso@acadomia.fr" && password === "adminpassword") { //mylene.d-rosso@acadomia.fr
       router.push("/user")
     }
     return;
