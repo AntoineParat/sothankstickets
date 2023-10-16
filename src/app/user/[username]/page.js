@@ -1,13 +1,11 @@
 "use client"; // you should add "use client" at the top to tell Next.js to send the JavaScript needed for that component, making it a Client Component:
 
 import { useState, useEffect } from "react";
-import { useRouter } from 'next/navigation';
 
-import CommentBox from '../../components/comments';
-import Navbar from '../../components/navbar';
+import CommentBox from '../../../components/username-comments';
+import Navbar from '../../../components/navbar';
 
-export default function App() {
-  const router = useRouter()
+export default function App({params}) {
 
   // tickets counter logic
   const [count, setCount] = useState(0);
@@ -60,11 +58,11 @@ export default function App() {
               {/* <h2 className="text-lg text-center font-semibold mb-4">Profile</h2> */}
               {/* photo nom et infos*/}
               <div class="flex flex-col mt-10 items-center pb-10">
-                <img class="w-32 h-32 mb-3 rounded-full shadow-lg ring-4 ring-yellow-400" src="/mylene.jpeg" alt="Mylène" />
-                <h5 class="mb-1 text-xl font-medium text-gray-900 ">Mylène Dupuy Rosso</h5>
-                <span class="text-sm text-gray-500 ">Zone Sud-Ouest</span>
-                <p class=" mt-4 text-gray-800 ">38 gratitudes reçues</p>
-                <p class=" mt-2 text-gray-800 ">92 tickets restants</p>
+                <img class="w-32 h-32 mb-3 rounded-full shadow-lg ring-4 ring-yellow-400" src={params.username === 'Antoine' ? '/moi2.jpg' : "https://www.svgrepo.com/show/382095/female-avatar-girl-face-woman-user-4.svg"} alt="Antoine" />
+                <h5 class="mb-1 text-xl font-medium text-gray-900 ">{decodeURIComponent(params.username)}</h5>
+                <span class="text-sm text-gray-500 ">Zone xxxxx</span>
+                <p class=" mt-4 text-gray-800 ">{Math.floor(Math.random() * 10) + 1} gratitudes reçues</p>
+                <p class=" mt-2 text-gray-800 ">{Math.floor(Math.random() * 10) + 1} tickets restants</p>
               </div>
             </div>
 
@@ -77,7 +75,7 @@ export default function App() {
                 </a> */}
               </div>
               <div class="flow-root">
-                <ul role="list" class="divide-y divide-gray-200">
+                <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
                   <li class="py-3 sm:py-4">
                     <div class="flex items-center space-x-4">
                       <div class="flex-shrink-0">
@@ -179,12 +177,7 @@ export default function App() {
 
             {/* send gratitude box*/}
             <div className="bg-white p-4 shadow rounded order-1">
-              <label for="email" class="block mb-2 text-sm font-medium text-gray-900  text-xl">Envoi de gratitude👇</label>
-              <input type="search" value={searchTerm} onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setShowDropdown(true)
-              }}
-                aria-describedby="helper-text-explanation" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="collaborateur@acadomia.fr" />
+              <label for="email" class="block mb-2 text-sm font-medium text-gray-900  text-xl">Donner des tickets de gratitude à {decodeURIComponent(params.username)}👇</label>
               {searchTerm && suggestions.length > 0 && showDropdown && (
                 <div className="absolute mt-2 rounded border border-gray-300 bg-white z-10">
                   {suggestions.map((suggestion, index) => (
@@ -238,44 +231,11 @@ export default function App() {
               </div>
             </div>
 
-            {/* gratitude heroes*/}
-            <div className="border-t p-2 border-b pb-4 mt-4">
-              <p className="font-bold text-lg">Gratitude Heroes</p>
-            </div>
-
-            {/*TOP 3*/}
-            <div className="w-full md:flex">
-              <div className="md:w-1/3 ">
-                <div class="flex flex-col mt-10 items-center pb-10">
-                  <img class="w-32 h-32 mb-3 rounded-full shadow-lg ring-4 ring-yellow-400 cursor-pointer" src="/mylene.jpeg" alt="Mylène" />
-                  <h5 class="mb-1 text-xl font-medium text-gray-900 ">Mylène Dupuy Rosso</h5>
-                  <span class="text-sm text-gray-500 ">Zone Sud-Ouest</span>
-                  <p class=" mt-4 text-gray-800 ">38 gratitudes reçues</p>
-                </div>
-              </div>
-              <div className="md:w-1/3">
-                <div class="flex flex-col mt-10 items-center pb-10">
-                  <img onClick={() => router.push('/user/Antoine')}  class="w-32 h-32 mb-3 rounded-full shadow-lg ring-4 ring-yellow-400 cursor-pointer" src="/moi2.jpg" alt="Antoine" />
-                  <h5 class="mb-1 text-xl font-medium text-gray-900">Antoine Parat</h5>
-                  <span class="text-sm text-gray-500 ">Zone Sud-Ouest</span>
-                  <p class=" mt-4 text-gray-800 ">29 gratitudes reçues</p>
-                </div>
-              </div>
-              <div className="md:w-1/3">
-                <div class="flex flex-col mt-10 items-center pb-10">
-                  <img onClick={() => router.push('/user/Collaborateur 5')}  class="w-32 h-32 mb-3 rounded-full shadow-lg ring-4 ring-yellow-400 cursor-pointer" src="https://www.svgrepo.com/show/382095/female-avatar-girl-face-woman-user-4.svg" alt=" image" />
-                  <h5 class="mb-1 text-xl font-medium text-gray-900">Collaborateur 5</h5>
-                  <span class="text-sm text-gray-500 ">Zone Nord</span>
-                  <p class=" mt-4 text-gray-800 ">21 gratitudes reçues</p>
-                </div>
-              </div>
-            </div>
-
             {/*feeds news*/}
             <div className="border-t p-2 border-b pb-4 mt-4">
-              <p className="font-bold text-lg">Fil d'actualités</p>
+              <p className="font-bold text-lg">Activités récentes de {decodeURIComponent(params.username)} 📡</p>
             </div>
-            <CommentBox />
+            <CommentBox username={decodeURIComponent(params.username)} />
           </div>
         </div>
       </div>

@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import 'tailwindcss/tailwind.css';
 
-function TicketGratitude({ donateur, donateurImg, date, tickets, destinataire, destinataireImg, commentaire }) {
+function TicketGratitude({donateur, donateurImg, date, tickets, destinataire, destinataireImg, commentaire }) {
     const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState('');
 
@@ -37,8 +37,8 @@ function TicketGratitude({ donateur, donateurImg, date, tickets, destinataire, d
         <div className="m-4 bg-white p-4 shadow-md rounded-lg">
             <div className="">
                 <div class="flex flex-col">
-                    <img class="w-20 h-20 p-1 rounded-full ring-4 ring-yellow-400 cursor-pointer" src={donateurImg} alt=" image" />
-                    <h5 class="mb-1 mt-1 text-lg font-medium text-gray-900 ">{donateur}</h5>
+                    <img class="w-20 h-20 p-1 rounded-full ring-4 ring-yellow-400 " src={donateurImg} alt=" image" />
+                    <h5 class="mb-1 mt-1 text-lg font-medium text-gray-900">{donateur}</h5>
                 </div>
                 <p className='text-slate-500 mb-3'>🕙 le {date}</p>
                 <div className='text-2xl font-bold p-3 text-center'>
@@ -49,8 +49,8 @@ function TicketGratitude({ donateur, donateurImg, date, tickets, destinataire, d
             </div>
             <div className='border-t p-2 border-b pb-4 mt-4 mb-4'>
                 <div class="flex flex-col">
-                    <img class="w-20 h-20 p-1 rounded-full ring-4 ring-yellow-400 cursor-pointer"src={destinataireImg} alt="image" />
-                    <h5 class="mt-1 text-lg font-medium text-gray-900 ">{destinataire}</h5>
+                    <img class="w-20 h-20 p-1 rounded-full ring-4 ring-yellow-400" src={destinataireImg} alt=" image" />
+                    <h5 class="mt-1 text-lg font-medium text-gray-900">{destinataire}</h5>
                     {CurrentDateComponent()}
                 </div>
                 {commentaire.réponse}
@@ -59,8 +59,8 @@ function TicketGratitude({ donateur, donateurImg, date, tickets, destinataire, d
                 {comments.map((comment, index) => (
                     <div key={index} className="mt-2 p-3 border-t border-slate-200">
                         <div class="flex flex-col">
-                            <img class="w-20 h-20 p-1 rounded-full ring-4 ring-yellow-400 cursor-pointer" src="/mylene.jpeg" alt="mylene" />
-                            <h5 class="mt-1 text-lg font-medium text-gray-900 ">Mylène Dupuy Rosso</h5>
+                            <img class="w-20 h-20 p-1 rounded-full ring-4 ring-yellow-400" src="/mylene.jpeg" alt=" image" />
+                            <h5 class="mt-1 text-lg font-medium text-gray-900">Mylène Dupuy Rosso</h5>
                             {CurrentDateComponent()}
                         </div>
                         {comment}
@@ -87,32 +87,32 @@ function TicketGratitude({ donateur, donateurImg, date, tickets, destinataire, d
     );
 }
 
-function CommentBox() {
+function CommentBox(props) {
     return (
         <div>
             <TicketGratitude
-                donateur="Céline Vermeulen-Franceschi"
-                donateurImg="/celine.jpeg"
-                date="12 Octobre 2023"
-                tickets={5}
-                destinataire="Guillaume"
-                destinataireImg="/Guillaume.jpeg"
+                donateur="Guillaume"
+                donateurImg="/Guillaume.jpeg"
+                date="15 Octobre 2023"
+                tickets={Math.floor(Math.random() * 20) + 1}
+                destinataire={props.username}
+                destinataireImg={props.username === 'Antoine' ? '/moi2.jpg' : "https://www.svgrepo.com/show/382095/female-avatar-girl-face-woman-user-4.svg"}
                 commentaire={{
-                    texte: "Merci pour ton aide précieuse !",
-                    réponse: "Avec plaisir !"
+                    texte: "",
+                    réponse: "Merci pour ces tickets !"
                 }}
             />
             {/* Vous pouvez ajouter d'autres <TicketGratitude /> ici */}
             <TicketGratitude
-                donateur="Axelle Rouais"
-                donateurImg="/Axelle.jpeg"
-                date="14 Octobre 2023"
-                tickets={56}
-                destinataire="Claire"
-                destinataireImg="/claire.jpeg"
+                donateur={props.username}
+                donateurImg={props.username === 'Antoine' ? '/moi2.jpg' : "https://www.svgrepo.com/show/382095/female-avatar-girl-face-woman-user-4.svg"}
+                date="16 Octobre 2023"
+                tickets={Math.floor(Math.random() * 50) + 1}
+                destinataire="Axelle Rouais"
+                destinataireImg="/Axelle.jpeg"
                 commentaire={{
-                    texte: "Super la visio sur le nouveau format du cours collectif",
-                    réponse: " A ton service 😀"
+                    texte: "🙏🙏🙏",
+                    réponse: "😁😁 "
                 }}
             />
         </div>

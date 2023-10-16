@@ -47,14 +47,14 @@ function TicketGratitude({ donateur, donateurImg, date, tickets, destinataire, d
             </div>
             <div className="mb-4 pt-4">{commentaire.texte}
             </div>
-            <div className='border-t p-2 border-b pb-4 mt-4 mb-4'>
+            {commentaire.réponse.length > 0 && <div className='border-t p-2 border-b pb-4 mt-4 mb-4'>
                 <div class="flex flex-col">
                     <img class="w-20 h-20 p-1 rounded-full ring-4 ring-yellow-400 cursor-pointer"src={destinataireImg} alt="image" />
                     <h5 class="mt-1 text-lg font-medium text-gray-900 ">{destinataire}</h5>
                     {CurrentDateComponent()}
                 </div>
                 {commentaire.réponse}
-            </div>
+            </div>}
             <div className='mt-2'>
                 {comments.map((comment, index) => (
                     <div key={index} className="mt-2 p-3 border-t border-slate-200">
@@ -91,28 +91,41 @@ function CommentBox() {
     return (
         <div>
             <TicketGratitude
-                donateur="Céline Vermeulen-Franceschi"
-                donateurImg="/celine.jpeg"
-                date="12 Octobre 2023"
-                tickets={5}
-                destinataire="Guillaume"
-                destinataireImg="/Guillaume.jpeg"
+                donateur="Antoine"
+                donateurImg="/moi2.jpg"
+                date="16 Octobre 2023"
+                tickets={50}
+                destinataire="Mylène"
+                destinataireImg="/mylene.jpeg"
                 commentaire={{
-                    texte: "Merci pour ton aide précieuse !",
-                    réponse: "Avec plaisir !"
+                    texte: "Un grand plaisir de collaborer avec toi !",
+                    réponse: ""
                 }}
             />
             {/* Vous pouvez ajouter d'autres <TicketGratitude /> ici */}
             <TicketGratitude
+                donateur="Céline"
+                donateurImg="/celine.jpeg"
+                date="13 Octobre 2023"
+                tickets={23}
+                destinataire="Mylène"
+                destinataireImg="/mylene.jpeg"
+                commentaire={{
+                    texte: "Merci pour tes conseils lors de la visio des RC",
+                    réponse: "Avec plaisir !"
+                }}
+            />
+            
+            <TicketGratitude
                 donateur="Axelle Rouais"
                 donateurImg="/Axelle.jpeg"
-                date="14 Octobre 2023"
+                date="11 Octobre 2023"
                 tickets={56}
-                destinataire="Claire"
-                destinataireImg="/claire.jpeg"
+                destinataire="Mylène"
+                destinataireImg="/mylene.jpeg"
                 commentaire={{
-                    texte: "Super la visio sur le nouveau format du cours collectif",
-                    réponse: " A ton service 😀"
+                    texte: "Très instructif la réunion d'aujourd'hui",
+                    réponse: "😀"
                 }}
             />
         </div>

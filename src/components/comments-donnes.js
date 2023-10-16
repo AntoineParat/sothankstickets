@@ -47,14 +47,14 @@ function TicketGratitude({ donateur, donateurImg, date, tickets, destinataire, d
             </div>
             <div className="mb-4 pt-4">{commentaire.texte}
             </div>
-            <div className='border-t p-2 border-b pb-4 mt-4 mb-4'>
+            {commentaire.réponse.length > 0 && <div className='border-t p-2 border-b pb-4 mt-4 mb-4'>
                 <div class="flex flex-col">
                     <img class="w-20 h-20 p-1 rounded-full ring-4 ring-yellow-400 cursor-pointer"src={destinataireImg} alt="image" />
                     <h5 class="mt-1 text-lg font-medium text-gray-900 ">{destinataire}</h5>
                     {CurrentDateComponent()}
                 </div>
                 {commentaire.réponse}
-            </div>
+            </div>}
             <div className='mt-2'>
                 {comments.map((comment, index) => (
                     <div key={index} className="mt-2 p-3 border-t border-slate-200">
@@ -91,28 +91,52 @@ function CommentBox() {
     return (
         <div>
             <TicketGratitude
-                donateur="Céline Vermeulen-Franceschi"
-                donateurImg="/celine.jpeg"
-                date="12 Octobre 2023"
-                tickets={5}
-                destinataire="Guillaume"
-                destinataireImg="/Guillaume.jpeg"
+                donateur="Mylène"
+                donateurImg="/mylene.jpeg"
+                date="16 Octobre 2023"
+                tickets={20}
+                destinataire="Collaborateur"
+                destinataireImg="https://www.svgrepo.com/show/382095/female-avatar-girl-face-woman-user-4.svg"
                 commentaire={{
-                    texte: "Merci pour ton aide précieuse !",
-                    réponse: "Avec plaisir !"
+                    texte: "Passionant le projet CSE",
+                    réponse: "Plaisir partagé !"
                 }}
             />
             {/* Vous pouvez ajouter d'autres <TicketGratitude /> ici */}
             <TicketGratitude
-                donateur="Axelle Rouais"
-                donateurImg="/Axelle.jpeg"
-                date="14 Octobre 2023"
-                tickets={56}
-                destinataire="Claire"
-                destinataireImg="/claire.jpeg"
+                donateur="Mylène"
+                donateurImg="/mylene.jpeg"
+                date="13 Octobre 2023"
+                tickets={12}
+                destinataire="Céline"
+                destinataireImg="/celine.jpeg"
                 commentaire={{
-                    texte: "Super la visio sur le nouveau format du cours collectif",
-                    réponse: " A ton service 😀"
+                    texte: "Un acceuil toujours très chaleureux à Montpellier",
+                    réponse: "De même qu'à Béziers 😀"
+                }}
+            />
+            <TicketGratitude
+                donateur="Mylène"
+                donateurImg="/mylene.jpeg"
+                date="11 Octobre 2023"
+                tickets={56}
+                destinataire="Guillaume"
+                destinataireImg="/Guillaume.jpeg"
+                commentaire={{
+                    texte: "Parce qu'on forme une belle équipe",
+                    réponse: "🚀"
+                }}
+            />
+            <TicketGratitude
+                donateur="Mylène"
+                donateurImg="/mylene.jpeg"
+                date="10 Octobre 2023"
+                tickets={6}
+                destinataire="Collaborateur 2"
+                destinataireImg="https://www.svgrepo.com/show/382095/female-avatar-girl-face-woman-user-4.svg"
+                commentaire={{
+                    texte: "",
+                    réponse: ""
                 }}
             />
         </div>
