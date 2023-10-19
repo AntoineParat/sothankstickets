@@ -1,49 +1,44 @@
-"use client"; // you should add "use client" at the top to tell Next.js to send the JavaScript needed for that component, making it a Client Component:
+"use client"; // you should add "use client" at the top to tell Next.js to send the JavaScript needed htmlFor that component, making it a Client Component:
 
 import { useState, useEffect } from "react";
 import { useRouter } from 'next/navigation';
 
+import db from '../../firebase';  // Assurez-vous que le chemin est correct
+import { collection, getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
+
+import GratitudeBox from "../../components/gratitudeBox";
 import CommentBox from '../../components/comments';
 import Navbar from '../../components/navbar';
 
 export default function App() {
   const router = useRouter()
 
-  // tickets counter logic
-  const [count, setCount] = useState(0);
+  // const [usersData, setUsersData] = useState([]); // Initialiser l'état avec un tableau vide.
 
-  function handleIncrement() {
-    setCount(count + 1);
-  }
+  // async function fetchUsers() {
+  //   const usersCollectionRef = collection(db, 'utilisateurs');  // 'users' est le nom de la collection.
+  //   const querySnapshot = await getDocs(usersCollectionRef);
 
-  function handleDecrement() {
-    setCount(count - 1);
-  }
+  //   const usersArray = querySnapshot.docs.map(doc => {
+  //     return { id: doc.id, ...doc.data() };
+  //   });
 
-  function setNumberOfTickets(e) {
-    const value = parseInt(e, 10);
-    if (e === "") {
-      setCount(null);
-    } else if (!isNaN(value)) {
-      setCount(value);
-    }
-  }
+  //   return usersArray;
+  // }
 
-  // suggestion adresses email
-  const [showDropdown, setShowDropdown] = useState(false)
-  const [searchTerm, setSearchTerm] = useState('');
-  const [suggestions, setSuggestions] = useState([]);
+  // useEffect(() => {
+  //   // Récupérer les données de l'utilisateur et les définir dans l'état.
+  //   fetchUsers().then(users => {
+  //     setUsersData(users);
+  //   });
+  // }, []);
 
-  useEffect(() => {
-    if (searchTerm) {
-      // Ici, fetchez vos suggestions à partir de votre API ou autre source.
-      // Pour cet exemple, utilisons une liste de données factices.
-      const dummyData = ['suggestion1@acadomia.fr', 'suggestion2@acadomia.fr'];
-      setSuggestions(dummyData);
-    } else {
-      setSuggestions([]);
-    }
-  }, [searchTerm]);
+  // Afficher `usersData` dans la console chaque fois qu'il est mis à jour.
+  // useEffect(() => {
+  //   console.log(usersData);
+  // }, [usersData]);
+
+
 
   return (
     <div className="min-h-screen bg-slate-100">
@@ -59,111 +54,111 @@ export default function App() {
             <div className="bg-white p-4 shadow mb-4">
               {/* <h2 className="text-lg text-center font-semibold mb-4">Profile</h2> */}
               {/* photo nom et infos*/}
-              <div class="flex flex-col mt-10 items-center pb-10">
-                <img class="w-32 h-32 mb-3 rounded-full shadow-lg ring-4 ring-yellow-400" src="/mylene.jpeg" alt="Mylène" />
-                <h5 class="mb-1 text-xl font-medium text-gray-900 ">Mylène Dupuy Rosso</h5>
-                <span class="text-sm text-gray-500 ">Zone Sud-Ouest</span>
-                <p class=" mt-4 text-gray-800 ">38 gratitudes reçues</p>
-                <p class=" mt-2 text-gray-800 ">92 tickets restants</p>
+              <div className="flex flex-col mt-10 items-center pb-10">
+                <img className="w-32 h-32 mb-3 rounded-full shadow-lg ring-4 ring-yellow-400" src="/mylene.jpeg" alt="Mylène" />
+                <h5 className="mb-1 text-xl font-medium text-gray-900 ">Mylène Dupuy Rosso</h5>
+                <span className="text-sm text-gray-500 ">Zone Sud-Ouest</span>
+                <p className=" mt-4 text-gray-800 ">38 gratitudes reçues</p>
+                <p className=" mt-2 text-gray-800 ">92 tickets restants</p>
               </div>
             </div>
 
             {/* Dernières activités */}
-            <div class="w-full mb-4 max-w-md p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8">
-              <div class="flex items-center justify-between mb-4">
-                <h5 class="text-xl font-bold leading-none text-gray-900">Derniers tickets reçus</h5>
-                {/* <a href="#" class="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500">
+            <div className="w-full mb-4 max-w-md p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8">
+              <div className="flex items-center justify-between mb-4">
+                <h5 className="text-xl font-bold leading-none text-gray-900">Derniers tickets reçus</h5>
+                {/* <a href="#" className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500">
                   View all
                 </a> */}
               </div>
-              <div class="flow-root">
-                <ul role="list" class="divide-y divide-gray-200">
-                  <li class="py-3 sm:py-4">
-                    <div class="flex items-center space-x-4">
-                      <div class="flex-shrink-0">
-                        <img class="w-8 h-8 rounded-full" src="https://www.svgrepo.com/show/382095/female-avatar-girl-face-woman-user-4.svg" alt="Neil image" />
+              <div className="flow-root">
+                <ul role="list" className="divide-y divide-gray-200">
+                  <li className="py-3 sm:py-4">
+                    <div className="flex items-center space-x-4">
+                      <div className="flex-shrink-0">
+                        <img className="w-8 h-8 rounded-full" src="https://www.svgrepo.com/show/382095/female-avatar-girl-face-woman-user-4.svg" alt="Neil image" />
                       </div>
-                      <div class="flex-1 min-w-0">
-                        <p class="text-sm font-medium text-gray-900 truncate ">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900 truncate ">
                           collaborateur 1
                         </p>
-                        <p class="text-sm text-gray-500 truncate ">
+                        <p className="text-sm text-gray-500 truncate ">
                           collaborateur1@acadomia.fr
                         </p>
                       </div>
-                      <div class="inline-flex items-center text-base font-semibold text-gray-900 ">
+                      <div className="inline-flex items-center text-base font-semibold text-gray-900 ">
                         6
                       </div>
                     </div>
                   </li>
-                  <li class="py-3 sm:py-4">
-                    <div class="flex items-center space-x-4">
-                      <div class="flex-shrink-0">
-                        <img class="w-8 h-8 rounded-full" src="https://www.svgrepo.com/show/382095/female-avatar-girl-face-woman-user-4.svg" alt=" image" />
+                  <li className="py-3 sm:py-4">
+                    <div className="flex items-center space-x-4">
+                      <div className="flex-shrink-0">
+                        <img className="w-8 h-8 rounded-full" src="https://www.svgrepo.com/show/382095/female-avatar-girl-face-woman-user-4.svg" alt=" image" />
                       </div>
-                      <div class="flex-1 min-w-0">
-                        <p class="text-sm font-medium text-gray-900 truncate ">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900 truncate ">
                           collaborateur 2
                         </p>
-                        <p class="text-sm text-gray-500 truncate ">
+                        <p className="text-sm text-gray-500 truncate ">
                           collaborateur2@acadomia.fr
                         </p>
                       </div>
-                      <div class="inline-flex items-center text-base font-semibold text-gray-900 ">
+                      <div className="inline-flex items-center text-base font-semibold text-gray-900 ">
                         5
                       </div>
                     </div>
                   </li>
-                  <li class="py-3 sm:py-4">
-                    <div class="flex items-center space-x-4">
-                      <div class="flex-shrink-0">
-                        <img class="w-8 h-8 rounded-full" src="https://www.svgrepo.com/show/382095/female-avatar-girl-face-woman-user-4.svg" alt="Michael image" />
+                  <li className="py-3 sm:py-4">
+                    <div className="flex items-center space-x-4">
+                      <div className="flex-shrink-0">
+                        <img className="w-8 h-8 rounded-full" src="https://www.svgrepo.com/show/382095/female-avatar-girl-face-woman-user-4.svg" alt="Michael image" />
                       </div>
-                      <div class="flex-1 min-w-0">
-                        <p class="text-sm font-medium text-gray-900 truncate ">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900 truncate ">
                           Collaborateur 3
                         </p>
-                        <p class="text-sm text-gray-500 truncate ">
+                        <p className="text-sm text-gray-500 truncate ">
                           collaborateur3@acadomia.fr
                         </p>
                       </div>
-                      <div class="inline-flex items-center text-base font-semibold text-gray-900 ">
+                      <div className="inline-flex items-center text-base font-semibold text-gray-900 ">
                         11
                       </div>
                     </div>
                   </li>
-                  <li class="py-3 sm:py-4">
-                    <div class="flex items-center space-x-4">
-                      <div class="flex-shrink-0">
-                        <img class="w-8 h-8 rounded-full" src="https://www.svgrepo.com/show/382095/female-avatar-girl-face-woman-user-4.svg" alt="Lana image" />
+                  <li className="py-3 sm:py-4">
+                    <div className="flex items-center space-x-4">
+                      <div className="flex-shrink-0">
+                        <img className="w-8 h-8 rounded-full" src="https://www.svgrepo.com/show/382095/female-avatar-girl-face-woman-user-4.svg" alt="Lana image" />
                       </div>
-                      <div class="flex-1 min-w-0">
-                        <p class="text-sm font-medium text-gray-900 truncate ">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900 truncate ">
                           collaborateur 4
                         </p>
-                        <p class="text-sm text-gray-500 truncate ">
+                        <p className="text-sm text-gray-500 truncate ">
                           collaborateur4@acadomia.fr
                         </p>
                       </div>
-                      <div class="inline-flex items-center text-base font-semibold text-gray-900 ">
+                      <div className="inline-flex items-center text-base font-semibold text-gray-900 ">
                         9
                       </div>
                     </div>
                   </li>
-                  <li class="pt-3 pb-0 sm:pt-4">
-                    <div class="flex items-center space-x-4">
-                      <div class="flex-shrink-0">
-                        <img class="w-8 h-8 rounded-full" src="https://www.svgrepo.com/show/382095/female-avatar-girl-face-woman-user-4.svg" alt="Thomas image" />
+                  <li className="pt-3 pb-0 sm:pt-4">
+                    <div className="flex items-center space-x-4">
+                      <div className="flex-shrink-0">
+                        <img className="w-8 h-8 rounded-full" src="https://www.svgrepo.com/show/382095/female-avatar-girl-face-woman-user-4.svg" alt="Thomas image" />
                       </div>
-                      <div class="flex-1 min-w-0">
-                        <p class="text-sm font-medium text-gray-900 truncate ">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900 truncate ">
                           collaborateur 5
                         </p>
-                        <p class="text-sm text-gray-500 truncate ">
+                        <p className="text-sm text-gray-500 truncate ">
                           collaborateur5@acadomia.fr
                         </p>
                       </div>
-                      <div class="inline-flex items-center text-base font-semibold text-gray-900 ">
+                      <div className="inline-flex items-center text-base font-semibold text-gray-900 ">
                         21
                       </div>
                     </div>
@@ -178,65 +173,7 @@ export default function App() {
           <div className="md:w-3/4 md:ml-4 flex-col">
 
             {/* send gratitude box*/}
-            <div className="bg-white p-4 shadow rounded order-1">
-              <label for="email" class="block mb-2 text-sm font-medium text-gray-900  text-xl">Envoi de gratitude👇</label>
-              <input type="search" value={searchTerm} onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setShowDropdown(true)
-              }}
-                aria-describedby="helper-text-explanation" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="collaborateur@acadomia.fr" />
-              {searchTerm && suggestions.length > 0 && showDropdown && (
-                <div className="absolute mt-2 rounded border border-gray-300 bg-white z-10">
-                  {suggestions.map((suggestion, index) => (
-                    <div key={index} onClick={() => {
-                      setSearchTerm(suggestion);
-                      setShowDropdown(false); // si vous utilisez un état pour gérer l'affichage du dropdown
-                    }} className="p-2 hover:bg-gray-200 cursor-pointer">
-                      {suggestion}
-                    </div>
-                  ))}
-                </div>
-              )}
-              {/* tickets counter input*/}
-              <div className="flex mt-2">
-                <button
-                  className="bg-gray-200 p-2 rounded-l-md hover:bg-gray-300"
-                  onClick={handleDecrement}
-                >
-                  -
-                </button>
-                <input
-                  // type="number"
-                  placeholder="nombre tickets"
-                  className="bg-white rounded border p-2 w-36 text-center"
-                  onChange={e => setNumberOfTickets(e.target.value)}
-                  value={count === 0 ? "" : count}
-                />
-                <button
-                  className="bg-gray-200 p-2 rounded-r-md hover:bg-gray-300"
-                  onClick={handleIncrement}
-                >
-                  +
-                </button>
-              </div>
-
-              {/* textarea commentaire de gratitude */}
-              <div className="border-b pb-4 mb-4 mt-2">
-                <textarea
-                  rows="4"
-                  className="w-full p-2 rounded border"
-                  placeholder="Message de gratitude...">
-                </textarea>
-                <button className="bg-blue-500 text-white rounded px-4 py-2 mt-2">
-                  Envoyer 💌
-                </button>
-              </div>
-
-              {/* Feed/Posts */}
-              <div>
-                {/* Single Post */}
-              </div>
-            </div>
+            <GratitudeBox/>
 
             {/* gratitude heroes*/}
             <div className="border-t p-2 border-b pb-4 mt-4">
@@ -246,27 +183,27 @@ export default function App() {
             {/*TOP 3*/}
             <div className="w-full md:flex">
               <div className="md:w-1/3 ">
-                <div class="flex flex-col mt-10 items-center pb-10">
-                  <img class="w-32 h-32 mb-3 rounded-full shadow-lg ring-4 ring-yellow-400 cursor-pointer" src="/mylene.jpeg" alt="Mylène" />
-                  <h5 class="mb-1 text-xl font-medium text-gray-900 ">Mylène Dupuy Rosso</h5>
-                  <span class="text-sm text-gray-500 ">Zone Sud-Ouest</span>
-                  <p class=" mt-4 text-gray-800 ">38 gratitudes reçues</p>
+                <div className="flex flex-col mt-10 items-center pb-10">
+                  <img className="w-32 h-32 mb-3 rounded-full shadow-lg ring-4 ring-yellow-400 cursor-pointer" src="/mylene.jpeg" alt="Mylène" />
+                  <h5 className="mb-1 text-xl font-medium text-gray-900 ">Mylène Dupuy Rosso</h5>
+                  <span className="text-sm text-gray-500 ">Zone Sud-Ouest</span>
+                  <p className=" mt-4 text-gray-800 ">38 gratitudes reçues</p>
                 </div>
               </div>
               <div className="md:w-1/3">
-                <div class="flex flex-col mt-10 items-center pb-10">
-                  <img onClick={() => router.push('/user/Antoine')}  class="w-32 h-32 mb-3 rounded-full shadow-lg ring-4 ring-yellow-400 cursor-pointer" src="/moi2.jpg" alt="Antoine" />
-                  <h5 class="mb-1 text-xl font-medium text-gray-900">Antoine Parat</h5>
-                  <span class="text-sm text-gray-500 ">Zone Sud-Ouest</span>
-                  <p class=" mt-4 text-gray-800 ">29 gratitudes reçues</p>
+                <div className="flex flex-col mt-10 items-center pb-10">
+                  <img onClick={() => router.push('/user/Antoine')} className="w-32 h-32 mb-3 rounded-full shadow-lg ring-4 ring-yellow-400 cursor-pointer" src="/moi2.jpg" alt="Antoine" />
+                  <h5 className="mb-1 text-xl font-medium text-gray-900">Antoine Parat</h5>
+                  <span className="text-sm text-gray-500 ">Zone Sud-Ouest</span>
+                  <p className=" mt-4 text-gray-800 ">29 gratitudes reçues</p>
                 </div>
               </div>
               <div className="md:w-1/3">
-                <div class="flex flex-col mt-10 items-center pb-10">
-                  <img onClick={() => router.push('/user/Collaborateur 5')}  class="w-32 h-32 mb-3 rounded-full shadow-lg ring-4 ring-yellow-400 cursor-pointer" src="https://www.svgrepo.com/show/382095/female-avatar-girl-face-woman-user-4.svg" alt=" image" />
-                  <h5 class="mb-1 text-xl font-medium text-gray-900">Collaborateur 5</h5>
-                  <span class="text-sm text-gray-500 ">Zone Nord</span>
-                  <p class=" mt-4 text-gray-800 ">21 gratitudes reçues</p>
+                <div className="flex flex-col mt-10 items-center pb-10">
+                  <img onClick={() => router.push('/user/Collaborateur 5')} className="w-32 h-32 mb-3 rounded-full shadow-lg ring-4 ring-yellow-400 cursor-pointer" src="https://www.svgrepo.com/show/382095/female-avatar-girl-face-woman-user-4.svg" alt=" image" />
+                  <h5 className="mb-1 text-xl font-medium text-gray-900">Collaborateur 5</h5>
+                  <span className="text-sm text-gray-500 ">Zone Nord</span>
+                  <p className=" mt-4 text-gray-800 ">21 gratitudes reçues</p>
                 </div>
               </div>
             </div>

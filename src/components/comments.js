@@ -36,9 +36,9 @@ function TicketGratitude({ donateur, donateurImg, date, tickets, destinataire, d
     return (
         <div className="m-4 bg-white p-4 shadow-md rounded-lg">
             <div className="">
-                <div class="flex flex-col">
-                    <img class="w-20 h-20 p-1 rounded-full ring-4 ring-yellow-400 cursor-pointer" src={donateurImg} alt=" image" />
-                    <h5 class="mb-1 mt-1 text-lg font-medium text-gray-900 ">{donateur}</h5>
+                <div className="flex flex-col">
+                    <img className="w-20 h-20 p-1 rounded-full ring-4 ring-yellow-400 cursor-pointer" src={donateurImg} alt=" image" />
+                    <h5 className="mb-1 mt-1 text-lg font-medium text-gray-900 ">{donateur}</h5>
                 </div>
                 <p className='text-slate-500 mb-3'>🕙 le {date}</p>
                 <div className='text-2xl font-bold p-3 text-center'>
@@ -48,9 +48,9 @@ function TicketGratitude({ donateur, donateurImg, date, tickets, destinataire, d
             <div className="mb-4 pt-4">{commentaire.texte}
             </div>
             <div className='border-t p-2 border-b pb-4 mt-4 mb-4'>
-                <div class="flex flex-col">
-                    <img class="w-20 h-20 p-1 rounded-full ring-4 ring-yellow-400 cursor-pointer"src={destinataireImg} alt="image" />
-                    <h5 class="mt-1 text-lg font-medium text-gray-900 ">{destinataire}</h5>
+                <div className="flex flex-col">
+                    <img className="w-20 h-20 p-1 rounded-full ring-4 ring-yellow-400 cursor-pointer"src={destinataireImg} alt="image" />
+                    <h5 className="mt-1 text-lg font-medium text-gray-900 ">{destinataire}</h5>
                     {CurrentDateComponent()}
                 </div>
                 {commentaire.réponse}
@@ -58,9 +58,9 @@ function TicketGratitude({ donateur, donateurImg, date, tickets, destinataire, d
             <div className='mt-2'>
                 {comments.map((comment, index) => (
                     <div key={index} className="mt-2 p-3 border-t border-slate-200">
-                        <div class="flex flex-col">
-                            <img class="w-20 h-20 p-1 rounded-full ring-4 ring-yellow-400 cursor-pointer" src="/mylene.jpeg" alt="mylene" />
-                            <h5 class="mt-1 text-lg font-medium text-gray-900 ">Mylène Dupuy Rosso</h5>
+                        <div className="flex flex-col">
+                            <img className="w-20 h-20 p-1 rounded-full ring-4 ring-yellow-400 cursor-pointer" src="/mylene.jpeg" alt="mylene" />
+                            <h5 className="mt-1 text-lg font-medium text-gray-900 ">Mylène Dupuy Rosso</h5>
                             {CurrentDateComponent()}
                         </div>
                         {comment}
