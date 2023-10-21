@@ -1,23 +1,25 @@
 "use client";
 
 // protectRoute.js
-import { useAuth } from './authContext';
-import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from './authContext';
 
-const ProtectRoute = (Component) => {
-  return () => {
+
+const withProtectedRoute = (Component) => {
+  return function ProtectedRoute(props) {
     const { currentUser } = useAuth();
     const router = useRouter();
 
     useEffect(() => {
       if (!currentUser) {
-        router.push('/');
+        router.push('/');  // Redirigez vers la page de connexion si l'utilisateur n'est pas connecté
       }
-    }, [currentUser]);
+    }, [currentUser, router]);
 
-    return <Component {...arguments} />;
+    // Si l'utilisateur est connecté, affichez le composant
+    return <Component {...props} />;
   };
 };
 
-export default ProtectRoute;
+export default withProtectedRoute;

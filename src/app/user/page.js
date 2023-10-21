@@ -5,7 +5,7 @@ import ProtectRoute from '../../protectRoute';
 import { useState, useEffect } from "react";
 import { useRouter } from 'next/navigation';
 
-import db from '../../firebase';  // Assurez-vous que le chemin est correct
+import { db } from '../../firebase';  // Assurez-vous que le chemin est correct
 import { collection, getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
 
 import GratitudeBox from "../../components/gratitudeBox";

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 
-import db from '../firebase'  // Assurez-vous que le chemin est correct
+import { db } from '../firebase'  // Assurez-vous que le chemin est correct
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 export default function GratitudeBox() {
