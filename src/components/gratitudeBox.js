@@ -8,8 +8,6 @@ import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 export default function GratitudeBox() {
     // tickets counter logic
     const [count, setCount] = useState(0);
-    const [gratitudeMessage, setGratitudeMessage] = useState('');
-
     function handleIncrement() {
         setCount(count + 1);
     }
@@ -21,11 +19,15 @@ export default function GratitudeBox() {
     function setNumberOfTickets(e) {
         const value = parseInt(e, 10);
         if (e === "") {
-            setCount(null);
+            setCount(0);
         } else if (!isNaN(value)) {
             setCount(value);
         }
     }
+
+    // Ajout d'un ticket sur firestore et pop up confirmation
+    const [gratitudeMessage, setGratitudeMessage] = useState('');
+    const [popupType, setPopupType] = useState('success');  // Ajout de cet état
 
     async function addGratitudeTicket() {
         const ticketsCollectionRef = collection(db, 'tickets');
@@ -34,14 +36,25 @@ export default function GratitudeBox() {
             const docRef = await addDoc(ticketsCollectionRef, {
                 from: 'antoine.parat@acadomia.fr',
                 to: gratitudeDestinataire,
-                gratitude_number: count,  // Je suppose qu'il y a une petite faute de frappe ici, et que vous vouliez dire "gratitude_number".
+                gratitude_number: count,
                 message: gratitudeMessage,
                 date: serverTimestamp()  // Ceci ajoutera automatiquement la date et l'heure actuelles en utilisant le timestamp du serveur.
             });
 
+            setShowPopup(true)
+            setPopupType('success');  // Définir le type de popup sur 'success'
+            setCount(0)
+            setgratitudeDestinataire('')
+            setGratitudeMessage('')
+
             console.log(`Ticket de gratitude ajouté avec l'ID: ${docRef.id}`);
         } catch (e) {
             console.error("Erreur lors de l'ajout du ticket de gratitude: ", e);
+            setShowPopup(true);
+            setPopupType('error');
+            setCount(0)
+            setgratitudeDestinataire('')
+            setGratitudeMessage('')
         }
     }
     // suggeion adresses email
@@ -59,8 +72,39 @@ export default function GratitudeBox() {
             setSuggestions([]);
         }
     }, [gratitudeDestinataire]);
+
+    const [showPopup, setShowPopup] = useState(false);
+    const [animate, setAnimate] = useState(false);
+
+    useEffect(() => {
+        if (showPopup) {
+            setAnimate(true);
+            const timer = setTimeout(() => {
+                setShowPopup(false);
+                setAnimate(false);  // Reset animation state when hiding popup
+            }, 4000); // 4 secondes
+
+            return () => clearTimeout(timer);
+        }
+    }, [showPopup]);
+
     return (
         <div className="bg-white p-4 shadow rounded order-1">
+            {/* pop up */}
+            {showPopup && (
+                <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50">
+                    <div className="absolute top-0 left-0 w-full h-full bg-black opacity-50"></div>
+                    <div className={`${popupType === 'success' ? 'bg-green-50 text-green-800' : 'bg-red-100 text-red-800'}rounded-lg p-8 shadow-xl z-10 transform transition-transform duration-500 ease-in-out ${animate ? 'translate-x-0' : 'translate-x-[-100%]'}`}>
+                        <h2 className="text-2xl mb-4 font-medium">{popupType === 'success' ? 'Merci !' : 'Erreur !'} </h2>
+                        <p className={`${popupType === 'success' ? 'text-green-800' : 'text-red-800'}`} >
+                            {popupType === 'success'
+                                ? 'Votre ticket de gratitude a été envoyé avec succès ⭐'
+                                : 'Une erreur s\'est produite lors de l\'envoi de votre ticket de gratitude.'}
+                        </p>
+                    </div>
+                </div>
+            )}
+
             <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900  text-xl">Envoi de gratitude👇</label>
             <input type="search" value={gratitudeDestinataire} onChange={(e) => {
                 setgratitudeDestinataire(e.target.value);
