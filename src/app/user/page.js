@@ -1,5 +1,7 @@
 "use client"; // you should add "use client" at the top to tell Next.js to send the JavaScript needed htmlFor that component, making it a Client Component:
 
+import ProtectRoute from '../../protectRoute';
+
 import { useState, useEffect } from "react";
 import { useRouter } from 'next/navigation';
 
@@ -10,7 +12,7 @@ import GratitudeBox from "../../components/gratitudeBox";
 import CommentBox from '../../components/comments';
 import Navbar from '../../components/navbar';
 
-export default function App() {
+function UserPage() {
   const router = useRouter()
 
   // const [usersData, setUsersData] = useState([]); // Initialiser l'état avec un tableau vide.
@@ -173,7 +175,7 @@ export default function App() {
           <div className="md:w-3/4 md:ml-4 flex-col">
 
             {/* send gratitude box*/}
-            <GratitudeBox/>
+            <GratitudeBox />
 
             {/* gratitude heroes*/}
             <div className="border-t p-2 border-b pb-4 mt-4">
@@ -219,3 +221,5 @@ export default function App() {
     </div>
   );
 };
+
+export default ProtectRoute(UserPage);
