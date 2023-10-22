@@ -9,8 +9,9 @@ import { db } from '../../firebase';  // Assurez-vous que le chemin est correct
 import { collection, getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
 
 import GratitudeBox from "../../components/gratitudeBox";
-import CommentBox from '../../components/comments';
+import Feeds from '../../components/Feeds';
 import Navbar from '../../components/navbar';
+import UserBox from '../../components/user/userBox';
 
 function UserPage() {
   const router = useRouter()
@@ -56,13 +57,14 @@ function UserPage() {
             <div className="bg-white p-4 shadow mb-4">
               {/* <h2 className="text-lg text-center font-semibold mb-4">Profile</h2> */}
               {/* photo nom et infos*/}
-              <div className="flex flex-col mt-10 items-center pb-10">
+              {/* <div className="flex flex-col mt-10 items-center pb-10">
                 <img className="w-32 h-32 mb-3 rounded-full shadow-lg ring-4 ring-yellow-400" src="/mylene.jpeg" alt="Mylène" />
                 <h5 className="mb-1 text-xl font-medium text-gray-900 ">Mylène Dupuy Rosso</h5>
                 <span className="text-sm text-gray-500 ">Zone Sud-Ouest</span>
                 <p className=" mt-4 text-gray-800 ">38 gratitudes reçues</p>
                 <p className=" mt-2 text-gray-800 ">92 tickets restants</p>
-              </div>
+              </div> */}
+              <UserBox/>
             </div>
 
             {/* Dernières activités */}
@@ -214,7 +216,7 @@ function UserPage() {
             <div className="border-t p-2 border-b pb-4 mt-4">
               <p className="font-bold text-lg">Fil d'actualités</p>
             </div>
-            <CommentBox />
+            <Feeds/>
           </div>
         </div>
       </div>

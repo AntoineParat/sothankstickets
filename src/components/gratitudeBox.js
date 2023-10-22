@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 
 import { db } from '../firebase'  // Assurez-vous que le chemin est correct
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { auth } from '../firebase';  // Votre configuration firebase
 
 export default function GratitudeBox() {
     // tickets counter logic
@@ -28,28 +29,32 @@ export default function GratitudeBox() {
     // Ajout d'un ticket sur firestore et pop up confirmation
     const [gratitudeMessage, setGratitudeMessage] = useState('');
     const [popupType, setPopupType] = useState('success');  // Ajout de cet état
+    const [isLoading, setIsLoading] = useState(false)
 
     async function addGratitudeTicket() {
+        setIsLoading(true);
+
         const ticketsCollectionRef = collection(db, 'tickets');
+
+        const user = auth.currentUser;
 
         try {
             const docRef = await addDoc(ticketsCollectionRef, {
-                from: 'antoine.parat@acadomia.fr',
+                from_email: user.email,
+                from_uid: user.uid,
                 to: gratitudeDestinataire,
                 gratitude_number: count,
                 message: gratitudeMessage,
                 date: serverTimestamp()  // Ceci ajoutera automatiquement la date et l'heure actuelles en utilisant le timestamp du serveur.
             });
-
+            setIsLoading(false)
             setShowPopup(true)
             setPopupType('success');  // Définir le type de popup sur 'success'
             setCount(0)
             setgratitudeDestinataire('')
             setGratitudeMessage('')
-
-            console.log(`Ticket de gratitude ajouté avec l'ID: ${docRef.id}`);
         } catch (e) {
-            console.error("Erreur lors de l'ajout du ticket de gratitude: ", e);
+            setIsLoading(false)
             setShowPopup(true);
             setPopupType('error');
             setCount(0)
@@ -82,7 +87,7 @@ export default function GratitudeBox() {
             const timer = setTimeout(() => {
                 setShowPopup(false);
                 setAnimate(false);  // Reset animation state when hiding popup
-            }, 4000); // 4 secondes
+            }, 3000); // 4 secondes
 
             return () => clearTimeout(timer);
         }
@@ -90,6 +95,10 @@ export default function GratitudeBox() {
 
     return (
         <div className="bg-white p-4 shadow rounded order-1">
+            {/* spinner */}
+            {isLoading && <div className="flex justify-center items-center h-screen">
+                <div className="animate-spin rounded-full h-32 w-32 border-t-4 border-blue-400"></div>
+            </div>}
             {/* pop up */}
             {showPopup && (
                 <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50">
@@ -155,7 +164,7 @@ export default function GratitudeBox() {
                     value={gratitudeMessage}
                     onChange={(e) => setGratitudeMessage(e.target.value)}>
                 </textarea>
-                <button onClick={addGratitudeTicket} className="bg-blue-500 text-white rounded px-4 py-2 mt-2">
+                <button onClick={() => addGratitudeTicket()} className="bg-blue-500 text-white rounded px-4 py-2 mt-2">
                     Envoyer 💌
                 </button>
             </div>

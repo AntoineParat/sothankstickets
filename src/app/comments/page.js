@@ -1,4 +1,4 @@
-import CommentBox from '../../components/comments';
+import CommentBox from '../../components/Feeds';
 
 export default function Comment () {
     return (
