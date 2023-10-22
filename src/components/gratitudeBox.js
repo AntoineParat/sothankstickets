@@ -41,8 +41,10 @@ export default function GratitudeBox() {
         try {
             const docRef = await addDoc(ticketsCollectionRef, {
                 from_email: user.email,
+                from_name : 'from_name', //user.name
                 from_uid: user.uid,
                 to: gratitudeDestinataire,
+                to_name : 'to_name',
                 gratitude_number: count,
                 message: gratitudeMessage,
                 date: serverTimestamp()  // Ceci ajoutera automatiquement la date et l'heure actuelles en utilisant le timestamp du serveur.

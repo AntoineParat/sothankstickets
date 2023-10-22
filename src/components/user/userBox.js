@@ -1,12 +1,11 @@
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 import { auth } from '../../firebase';  // Votre configuration firebase
 
 
 function UserBox() {
-
-    const user = auth.currentUser;
-    console.log(user.email, user.uid)
+    const router = useRouter()
 
     const [showModal, setShowModal] = useState(false);
 
@@ -50,6 +49,15 @@ function UserBox() {
     function handleSetZone(e) {
         setZone(e.target.value)
     }
+
+    const handleLogout = async () => {
+        try {
+            await auth.signOut();
+            router.replace('/login');
+        } catch (error) {
+            console.error("Erreur lors de la déconnexion: ", error);
+        }
+    };
 
     return (
         <div className="flex flex-col mt-10 items-center pb-10">
@@ -124,6 +132,12 @@ function UserBox() {
 
             <p className="mt-4 text-gray-800">38 gratitudes reçues</p>
             <p className="mt-2 text-gray-800">92 tickets restants</p>
+            <button
+                onClick={handleLogout}
+                className="mt-4 bg-red-500 text-white px-2 py-1 rounded text-xs font-semibold hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-400"
+            >
+                Déconnexion
+            </button>
         </div>
     );
 }
