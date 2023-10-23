@@ -1,7 +1,127 @@
+"use client"
+
+import { useEffect, useState, useRef } from 'react';
+
 import Navbar from '../../../components/navbar';
-import CommentBox from '../../../components/comments-reçus';
+import TicketGratitude from '../../../components/Feeds';
+import UserBox from '@/components/user/userBox';
+
+import { db, auth } from '../../../firebase';  // Assurez-vous que le chemin est correct
+
+import {
+    collection,
+    getDocs,
+    query,
+    orderBy,
+    startAfter,
+    limit,
+    where
+} from 'firebase/firestore';
 
 export default function Ticketsrecus() {
+
+    const [tickets, setTickets] = useState([]);
+    const userEmail = auth.currentUser.email;
+
+    console.log("Component rendered");
+
+    const fetchInProgress = useRef(false);
+
+    useEffect(() => {
+        if (!fetchInProgress.current) {
+            fetchTickets();
+            fetchInProgress.current = true;
+        }
+    }, []);
+
+    const [lastDoc, setLastDoc] = useState(null);
+    const [allTicketsLoaded, setAllTicketsLoaded] = useState(false);
+
+    async function fetchTickets() {
+        console.log("fetchTickets called", { lastDoc, userEmail });
+
+        let q;
+        if (lastDoc) {
+            q = query(
+                collection(db, "tickets"),
+                where("to", "==", userEmail),
+                orderBy("date", "desc"),
+                startAfter(lastDoc),
+                limit(10)
+            );
+        } else {
+            q = query(
+                collection(db, "tickets"),
+                where("to", "==", userEmail),
+                orderBy("date", "desc"),
+                limit(10)
+            );
+        }
+        const snapshot = await getDocs(q);
+        const ticketsData = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+
+        console.log("ticketsData fetched", ticketsData);
+        // Reset fetchInProgress when the fetch completes
+
+        // Resetting the tickets state before updating it
+        setTickets([]);
+        setTickets(ticketsData);
+
+        fetchInProgress.current = false;
+
+
+        if (snapshot.docs.length < 10) {
+            setAllTicketsLoaded(true);
+        } else {
+            setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
+        }
+    }
+
+    function loadMoreTickets() {
+        console.log("loadMoreTickets called");
+        fetchTickets();
+    }
+
+
+    // async function fetchTickets() {
+    //     let q;
+    //     if (lastDoc) {
+    //         q = query(
+    //             collection(db, "tickets"),
+    //             where("to", "==", userEmail),
+    //             orderBy("date", "desc"),
+    //             startAfter(lastDoc),
+    //             limit(10)
+    //         );
+    //     } else {
+    //         q = query(
+    //             collection(db, "tickets"),
+    //             where("to", "==", userEmail),
+    //             orderBy("date", "desc"),
+    //             limit(10)
+    //         );
+    //     }
+    //     const snapshot = await getDocs(q);
+    //     const ticketsData = snapshot.docs.map(doc => ({
+    //         id: doc.id,
+    //         ...doc.data()
+    //     }));
+    //     setTickets(prevTickets => [...prevTickets, ...ticketsData]);
+
+    //     if (snapshot.docs.length < 10) {
+    //         setAllTicketsLoaded(true);
+    //     } else {
+    //         setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
+    //     }
+    // }
+
+    // function loadMoreTickets() {
+    //     fetchTickets();
+    // }
+
     return (
         <div>
             <div className="min-h-screen bg-slate-100">
@@ -13,15 +133,8 @@ export default function Ticketsrecus() {
                         {/* Sidebar */}
                         <div className="md:w-1/4">
                             <div className="bg-white p-4 shadow mb-4">
-                                {/* <h2 className="text-lg text-center font-semibold mb-4">Profile</h2> */}
-                                {/* photo nom et infos*/}
-                                <div className="flex flex-col mt-10 items-center pb-10">
-                                    <img className="w-32 h-32 mb-3 rounded-full shadow-lg ring-4 ring-yellow-400" src="/mylene.jpeg" alt="Mylène" />
-                                    <h5 className="mb-1 text-xl font-medium text-gray-900 ">Mylène Dupuy Rosso</h5>
-                                    <span className="text-sm text-gray-500 ">Zone Sud-Ouest</span>
-                                    <p className=" mt-4 text-gray-800 ">38 gratitudes reçues</p>
-                                    <p className=" mt-2 text-gray-800 ">92 tickets restants</p>
-                                </div>
+                                <UserBox />
+
                             </div>
 
                         </div>
@@ -29,7 +142,13 @@ export default function Ticketsrecus() {
                         {/* Main content */}
                         <div className="md:w-3/4 md:ml-4 flex-col">
                             {/*feeds news*/}
-                            <CommentBox />
+                            <div>
+                                {tickets.map(ticket => (
+                                    <TicketGratitude key={ticket.id} ticket={ticket} />
+                                ))}
+                                {!allTicketsLoaded && <button onClick={loadMoreTickets}>Afficher plus</button>}
+                            </div>
+                            {/* <CommentBox /> */}
                         </div>
                     </div>
                 </div>
