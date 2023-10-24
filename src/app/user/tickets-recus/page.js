@@ -23,8 +23,6 @@ export default function Ticketsrecus() {
     const [tickets, setTickets] = useState([]);
     const userEmail = auth.currentUser.email;
 
-    console.log("Component rendered");
-
     const fetchInProgress = useRef(false);
 
     useEffect(() => {
@@ -66,9 +64,8 @@ export default function Ticketsrecus() {
         console.log("ticketsData fetched", ticketsData);
         // Reset fetchInProgress when the fetch completes
 
-        // Resetting the tickets state before updating it
-        setTickets([]);
-        setTickets(ticketsData);
+        setTickets(prevTickets => [...prevTickets, ...ticketsData]);
+
 
         fetchInProgress.current = false;
 

@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { auth } from '../../firebase';  // Votre configuration firebase
+import { auth, storage } from '../../firebase';  // Votre configuration firebase
+import { updateProfile } from "firebase/auth";
+
+import { ref, uploadString, getDownloadURL } from "firebase/storage";
 
 
 function UserBox() {
@@ -9,29 +12,78 @@ function UserBox() {
 
     const [showModal, setShowModal] = useState(false);
 
+    const user = auth.currentUser;
+
+    const [photoUrl, setPhotoUrl] = useState(user.photoURL)
+
+    //update de l'image de profil
     const handleImageChange = (e) => {
         if (e.target.files && e.target.files[0]) {
             const reader = new FileReader();
 
             reader.onload = function (event) {
-                // Vous pouvez définir l'URL de l'image ici et l'envoyer au serveur ou à Firebase Storage.
-                console.log(event.target.result);
-                setShowModal(false)
+                // L'URL de données de l'image.
+                const imageDataUrl = event.target.result;
+
+                // Enregistrez l'image dans Firebase Storage.
+                saveImageToFirebase(imageDataUrl);
+
+                setShowModal(false);
             }
 
             reader.readAsDataURL(e.target.files[0]);
         }
     };
 
+    const saveImageToFirebase = (imageDataUrl) => {
+
+        // Créez une référence pour l'emplacement où vous souhaitez stocker l'image.
+        // Par exemple, "userProfileImages/" suivi de l'ID utilisateur pour garantir un nom de fichier unique.
+        const userId = user.uid; // Remplacez ceci par l'ID de l'utilisateur réel.
+        const imageRef = ref(storage, 'userProfileImages/' + userId);
+
+        // Enregistrez l'image dans Firebase Storage.
+        uploadString(imageRef, imageDataUrl, 'data_url')
+            .then((snapshot) => {
+                console.log("Image uploaded!");
+
+                // Si vous souhaitez également obtenir l'URL de téléchargement public de l'image
+                return getDownloadURL(snapshot.ref);
+            })
+            .then((downloadURL) => {
+                // Mise à jour du photoURL dans Firebase Auth
+                setPhotoUrl(downloadURL)
+                return updateProfile(user, {
+                    photoURL: downloadURL
+                });
+            })
+            .catch((error) => {
+                console.error("Error uploading image: ", error);
+            });
+    }
+
     const handleImageClick = () => {
         setShowModal(true);
     };
 
     const [isEditing, setIsEditing] = useState(false);
-    const [name, setName] = useState('Mylène Dupuy Rosso');
+    const [name, setName] = useState(user.displayName);
 
     function handleNameChange() {
-        console.log(name)
+        if (!user) {
+            console.error("Aucun utilisateur connecté");
+        } else {
+            updateProfile(user, {
+                displayName: name,
+                // Vous pouvez également mettre à jour le `photoURL` ou d'autres propriétés si nécessaire
+            })
+                .then(() => {
+                    console.log("Nom d'utilisateur mis à jour avec succès");
+                })
+                .catch(error => {
+                    console.error("Erreur lors de la mise à jour du nom d'utilisateur :", error);
+                });
+        }
         setIsEditing(false)
     }
 
@@ -57,13 +109,29 @@ function UserBox() {
         } catch (error) {
             console.error("Erreur lors de la déconnexion: ", error);
         }
+
+
+        const user = auth.currentUser;
+
+        if (user) {
+            user.updateProfile({
+                displayName: "John Doe"
+            }).then(() => {
+                // Mise à jour réussie
+                console.log("Nom d'utilisateur mis à jour avec succès");
+            }).catch((error) => {
+                // Une erreur est survenue
+                console.error("Erreur lors de la mise à jour du nom d'utilisateur:", error);
+            });
+        }
+
     };
 
     return (
         <div className="flex flex-col mt-10 items-center pb-10">
             {/* user photo */}
             <div className="relative group cursor-pointer">
-                <img className="w-32 h-32 mb-3 rounded-full shadow-lg ring-4 ring-yellow-400" src="/mylene.jpeg" alt="Mylène" />
+                <img className="w-32 h-32 mb-3 rounded-full shadow-lg ring-4 ring-yellow-400" src={photoUrl} alt="Mylène" />
                 <div
                     className="absolute inset-0 flex justify-center items-center opacity-0 group-hover:opacity-100"
                     onClick={handleImageClick}
