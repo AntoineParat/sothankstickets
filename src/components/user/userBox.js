@@ -14,7 +14,7 @@ function UserBox() {
 
     const user = auth.currentUser;
 
-    const [photoUrl, setPhotoUrl] = useState(user.photoURL)
+    const [photoUrl, setPhotoUrl] = useState(user ? user.photoURL : null)
 
     //update de l'image de profil
     const handleImageChange = (e) => {
@@ -67,7 +67,7 @@ function UserBox() {
     };
 
     const [isEditing, setIsEditing] = useState(false);
-    const [name, setName] = useState(user.displayName);
+    const [name, setName] = useState(user ? user.displayName : null);
 
     function handleNameChange() {
         if (!user) {
@@ -109,22 +109,6 @@ function UserBox() {
         } catch (error) {
             console.error("Erreur lors de la déconnexion: ", error);
         }
-
-
-        const user = auth.currentUser;
-
-        if (user) {
-            user.updateProfile({
-                displayName: "John Doe"
-            }).then(() => {
-                // Mise à jour réussie
-                console.log("Nom d'utilisateur mis à jour avec succès");
-            }).catch((error) => {
-                // Une erreur est survenue
-                console.error("Erreur lors de la mise à jour du nom d'utilisateur:", error);
-            });
-        }
-
     };
 
     return (

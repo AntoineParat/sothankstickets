@@ -43,6 +43,7 @@ export default function GratitudeBox() {
                 from_email: user.email,
                 from_name : 'from_name', //user.name
                 from_uid: user.uid,
+                from_photoURL : user.photoURL,
                 to: gratitudeDestinataire,
                 to_name : 'to_name',
                 gratitude_number: count,
