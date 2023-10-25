@@ -41,7 +41,7 @@ export default function GratitudeBox() {
         try {
             const docRef = await addDoc(ticketsCollectionRef, {
                 from_email: user.email,
-                from_name : 'from_name', //user.name
+                from_name : user.displayName, //user.name
                 from_uid: user.uid,
                 from_photoURL : user.photoURL,
                 to: gratitudeDestinataire,
