@@ -44,8 +44,7 @@ export default function GratitudeBox() {
                 from_name : user.displayName, //user.name
                 from_uid: user.uid,
                 from_photoURL : user.photoURL,
-                to: gratitudeDestinataire,
-                to_name : 'to_name',
+                to_email: gratitudeDestinataire,
                 gratitude_number: count,
                 message: gratitudeMessage,
                 date: serverTimestamp()  // Ceci ajoutera automatiquement la date et l'heure actuelles en utilisant le timestamp du serveur.

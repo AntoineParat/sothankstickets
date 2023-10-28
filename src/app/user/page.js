@@ -2,7 +2,7 @@
 
 import ProtectRoute from '../../protectRoute';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from 'next/navigation';
 
 import { db } from '../../firebase'  // Assurez-vous que le chemin est correct
@@ -83,31 +83,8 @@ function UserPage() {
 
   }
 
+ 
 
-  // const [usersData, setUsersData] = useState([]); // Initialiser l'état avec un tableau vide.
-
-  // async function fetchUsers() {
-  //   const usersCollectionRef = collection(db, 'utilisateurs');  // 'users' est le nom de la collection.
-  //   const querySnapshot = await getDocs(usersCollectionRef);
-
-  //   const usersArray = querySnapshot.docs.map(doc => {
-  //     return { id: doc.id, ...doc.data() };
-  //   });
-
-  //   return usersArray;
-  // }
-
-  // useEffect(() => {
-  //   // Récupérer les données de l'utilisateur et les définir dans l'état.
-  //   fetchUsers().then(users => {
-  //     setUsersData(users);
-  //   });
-  // }, []);
-
-  // Afficher `usersData` dans la console chaque fois qu'il est mis à jour.
-  // useEffect(() => {
-  //   console.log(usersData);
-  // }, [usersData]);
 
 
 

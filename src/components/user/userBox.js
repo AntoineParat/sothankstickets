@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { auth, storage } from '../../firebase';  // Votre configuration firebase
+import { auth, storage, db } from '../../firebase';  // Votre configuration firebase
 import { updateProfile } from "firebase/auth";
 
 import { ref, uploadString, getDownloadURL } from "firebase/storage";
+
+import { doc, updateDoc } from "firebase/firestore";
+
 
 
 function UserBox() {
@@ -50,12 +53,21 @@ function UserBox() {
                 // Si vous souhaitez également obtenir l'URL de téléchargement public de l'image
                 return getDownloadURL(snapshot.ref);
             })
-            .then((downloadURL) => {
+            .then(async (downloadURL) => {
                 // Mise à jour du photoURL dans Firebase Auth
-                setPhotoUrl(downloadURL)
-                return updateProfile(user, {
+                setPhotoUrl(downloadURL);
+                await updateProfile(user, {
                     photoURL: downloadURL
                 });
+
+                // Mettre à jour le photoURL dans la collection "utilisateurs"
+                const userRef = doc(db, "utilisateurs", user.uid);
+
+                await updateDoc(userRef, {
+                    photoURL: downloadURL
+                });
+
+                console.log("Document successfully updated!");
             })
             .catch((error) => {
                 console.error("Error uploading image: ", error);

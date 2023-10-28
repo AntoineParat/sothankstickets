@@ -3,8 +3,9 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { auth } from '../../firebase';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
+import { auth, db } from '../../firebase';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { doc, setDoc } from 'firebase/firestore';
 
 
 export default function Home() {
@@ -13,25 +14,18 @@ export default function Home() {
   // email sign in logic
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [zone, setZone] = useState('');
+  const [zone, setZone] = useState('Sud Ouest');
   const [isPasswordError, setIsPasswordError] = useState(false)
   const [showAlert, setShowAlert] = useState(false);
 
-
-  function checkEmail(event) {
-    event.preventDefault();
-    if (email === "mylene.d-rosso@acadomia.fr" && password === "adminpassword") { //mylene.d-rosso@acadomia.fr
-      router.push("/user")
-    }
-    return;
-  }
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSignIn = (e) => {
     e.preventDefault(); // Empêche le rechargement de la page
 
-    if (!isValidEmail(email)) {
-      return setShowAlert(true);
-    }
+    // if (!isValidEmail(email)) {
+    //   return setShowAlert(true);
+    // }
 
     const formData = {
       email,
@@ -40,16 +34,17 @@ export default function Home() {
     };
 
     async function firebaseLogin(formData) {
+      setIsLoading(true)
       try {
-        // const userCredential = await signInWithEmailAndPassword(auth,formData.email, formData.password); //login
         const userCredential = await signInWithEmailAndPassword(auth, formData.email, formData.password); //signUp
         const user = userCredential.user;
-        console.log(user);
+        setIsLoading(false);
         router.push('/user')
       } catch (error) {
         setIsPasswordError(true)
         console.error(error.code, error.message); // auth/invalid-login-credential ou email inexistant
       }
+      setIsLoading(false);
     }
 
     firebaseLogin(formData)
@@ -70,30 +65,101 @@ export default function Home() {
     const formData = {
       email,
       password,
-      zone
+      zone,
     };
 
     firebaseSignUp(formData)
 
     async function firebaseSignUp(formData) {
+      setIsLoading(true)
+
+      function extractNameFromEmail(email) {
+        const [name, domain] = email.split('@');
+        if (domain) {
+          const [firstName, lastName] = name.split('.');
+          return { firstName, lastName };
+        }
+        return { firstName: '', lastName: '' };
+      }
+
       try {
         // const userCredential = await signInWithEmailAndPassword(auth,formData.email, formData.password); //login
         const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password); //signUp
         const user = userCredential.user;
-        console.log(user);
+
+        // Récupération du prénom et du nom à partir de l'adresse email
+        const { firstName, lastName } = extractNameFromEmail(formData.email);
+
+        // Mise à jour des champs displayName et photoURL
+        await updateProfile(user, {
+          displayName: `${firstName} ${lastName}`,
+          photoURL: 'https://firebasestorage.googleapis.com/v0/b/sothankstickets.appspot.com/o/userProfileImages%2Fuser.jpeg?alt=media&token=9467e3a3-d249-4c0c-96ad-d84f7fe6cd93&_gl=1*1ug9rpi*_ga*MTk0NzE1NTQ1MC4xNjk3MDAxMjIw*_ga_CW55HF8NVT*MTY5ODM0MjU1OC.2.1.1.50.0.0'
+        });
+
+        // 1. Référence au document utilisateur principal
+        const userRef = doc(db, 'utilisateurs', user.uid);
+
+        //2.création de la date
+        const currentDate = new Date();
+        const currentMonth = `${currentDate.getMonth() + 1}-${currentDate.getFullYear()}`;
+
+        //3. Ajout des informations dans Firestore
+        await setDoc(userRef, {
+          email: formData.email,
+          name: `${firstName} ${lastName}`,
+          zone: formData.zone,
+          photoURL: 'https://firebasestorage.googleapis.com/v0/b/sothankstickets.appspot.com/o/userProfileImages%2Fuser.jpeg?alt=media&token=9467e3a3-d249-4c0c-96ad-d84f7fe6cd93&_gl=1*1ug9rpi*_ga*MTk0NzE1NTQ1MC4xNjk3MDAxMjIw*_ga_CW55HF8NVT*MTY5ODM0MjU1OC.2.1.1.50.0.0'
+        });
+
+        // 4. Définir les données pour le document "gratitudeData"
+        const gratitudeDataRef = doc(userRef, currentMonth, 'gratitudeData');
+
+        await setDoc(gratitudeDataRef, {
+          gratitudes: 0,
+          ticket_zone: 50,
+          ticket_horszone: 50
+        });
+
+
+        setIsLoading(false);
         router.push('/user')
       } catch (error) {
         console.error(error.code, error.message); // auth/invalid-login-credential ou email inexistant
       }
+      setIsLoading(false);
     }
 
-    firebaseSignUp(formData)
+    // firebaseSignUp(formData)
+
+    // async function firebaseSignUp(formData) {
+    //   try {
+    //     const response = await fetch("https://europe-west3-sothankstickets.cloudfunctions.net/signUp", {
+    //       method: "POST",
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //       },
+    //       body: JSON.stringify(formData),
+    //     });
+
+    //     const data = await response.json();
+
+    //     if (data.success) {
+    //       console.log("Inscription réussie avec l'ID utilisateur:", data.userId);
+    //       router.push('/user');
+    //     } else {
+    //       console.error("Erreur lors de l'inscription:", data.error);
+    //     }
+    //   } catch (error) {
+    //     console.error("Erreur lors de la communication avec la fonction Cloud:", error);
+    //   }
+    // }
+
 
   };
 
   function isValidEmail(email) {
-    // const regex = /^[a-zA-Z0-9._-]+@acadomia.com\.fr$/;
-    const regex = /^[\w.-]+@gmail\.com$/;
+    const regex = /^[a-zA-Z0-9._-]+@acadomia\.fr$/;
+    // const regex = /^[\w.-]+@gmail\.com$/;
     return regex.test(email);
   }
 
@@ -114,6 +180,12 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-slate-100 relative md:flex items-center justify-center">
+      {/* Spinner */}
+      {isLoading && (
+        <div className="absolute inset-0 z-60 flex justify-center items-center bg-black bg-opacity-50">
+          <div className="animate-spin rounded-full h-32 w-32 border-t-4 border-blue-400"></div>
+        </div>
+      )}
       {/* Pop up alerte mail */}
       {showAlert && (
         <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50">
@@ -142,7 +214,7 @@ export default function Home() {
             <div className="mb-6">
               <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 ">Mot de passe</label>
               <input onChange={(e) => setPassword(e.target.value)} type="password" id="password" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required />
-              { isPasswordError && <p className='text-red-500 text-sm block mt-2 text-sm block mt-2'>Mauvaise combinaison email / mot de passe</p>}
+              {isPasswordError && <p className='text-red-500 text-sm block mt-2 text-sm block mt-2'>Mauvaise combinaison email / mot de passe</p>}
             </div>
             <div className="flex justify-between items-center">
               <button className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Se connecter</button>

@@ -57,7 +57,7 @@ function TicketGratitude({ ticket }) {
                 </div>
                 <p className='text-slate-500 mb-3'>🕙 le {formattedDate}</p>
                 <div className='text-2xl font-bold p-3 text-center'>
-                    A donné <span className='underline decoration-double decoration-yellow-300'>{ticket.gratitude_number}</span> tickets de gratitude à <span className='underline decoration-double decoration-yellow-300'> {ticket.to} </span> 💌
+                    A donné <span className='underline decoration-double decoration-yellow-300'>{ticket.gratitude_number}</span> tickets de gratitude à <span className='underline decoration-double decoration-yellow-300'> {ticket.to_email} </span> 💌
                 </div>
             </div>
             <div className="mb-4 pt-4">{ticket.message}
