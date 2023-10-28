@@ -6,7 +6,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from 'next/navigation';
 
 import { db } from '../../firebase'  // Assurez-vous que le chemin est correct
-import { collection, getDocs, onSnapshot, query, orderBy, limit, startAfter } from "firebase/firestore";
+import { collection, doc, getDocs, onSnapshot, query, orderBy, limit, startAfter } from "firebase/firestore";
 
 import GratitudeBox from "../../components/gratitudeBox";
 import TicketGratitude from '../../components/Feeds';
@@ -18,7 +18,7 @@ function UserPage() {
 
   const [tickets, setTickets] = useState([]);
 
-  // Mise en place d'un écouteur pour les changements realtime
+  // Mise en place d'un écouteur pour les nouveaux tickets realtime
   useEffect(() => {
     fetchTickets();
     const q = query(
@@ -83,7 +83,28 @@ function UserPage() {
 
   }
 
- 
+  //mise à jour du top 3 en temps réel
+  const [top3, setTop3] = useState([]);
+
+  useEffect(() => {
+    const currentDate = new Date();
+    const currentMonth = `${currentDate.getMonth() + 1}-${currentDate.getFullYear()}`;
+
+    const statsDocRef = doc(db, 'stats', currentMonth);
+
+    const unsubscribe = onSnapshot(statsDocRef, (docSnapshot) => {
+      const data = docSnapshot.data();
+      if (data && data.top3) {
+        setTop3(data.top3);
+      }
+    });
+
+    // Nettoyage : se désabonner de l'écouteur quand le composant est démonté.
+    return () => unsubscribe();
+  }, []);
+
+
+
 
 
 
@@ -103,7 +124,7 @@ function UserPage() {
               <UserBox />
             </div>
 
-            {/* Dernieres gratitudes reçues */}
+            {/* Dernieres tickets reçues */}
             <div className="w-full mb-4 max-w-md p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8">
               <div className="flex items-center justify-between mb-4">
                 <h5 className="text-xl font-bold leading-none text-gray-900">Derniers tickets reçus</h5>
@@ -117,14 +138,14 @@ function UserPage() {
                     <li key={index} className="py-3 sm:py-4">
                       <div className="flex items-center space-x-4">
                         <div className="flex-shrink-0">
-                          <img className="w-8 h-8 rounded-full" src="https://www.svgrepo.com/show/382095/female-avatar-girl-face-woman-user-4.svg" alt="Neil image" />
+                          <img className="w-8 h-8 rounded-full" src={ticket.to_photoURL} alt="Neil image" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-gray-900 truncate ">
-                            name {/*ticket.from_name */}
+                            {ticket.to_name}
                           </p>
                           <p className="text-sm text-gray-500 truncate ">
-                            {ticket.to}
+                            {ticket.to_email}
                           </p>
                         </div>
                         <div className="inline-flex items-center text-base font-semibold text-gray-900 ">
@@ -152,7 +173,7 @@ function UserPage() {
 
             {/*TOP 3*/}
             <div className="w-full md:flex">
-              <div className="md:w-1/3 ">
+              {/* <div className="md:w-1/3 ">
                 <div className="flex flex-col mt-10 items-center pb-10">
                   <img className="w-32 h-32 mb-3 rounded-full shadow-lg ring-4 ring-yellow-400 cursor-pointer" src="/mylene.jpeg" alt="Mylène" />
                   <h5 className="mb-1 text-xl font-medium text-gray-900 ">Mylène Dupuy Rosso</h5>
@@ -175,7 +196,17 @@ function UserPage() {
                   <span className="text-sm text-gray-500 ">Zone Nord</span>
                   <p className=" mt-4 text-gray-800 ">21 gratitudes reçues</p>
                 </div>
-              </div>
+              </div> */}
+              {top3.map((user, index) => (
+                <div key={index} className="md:w-1/3">
+                  <div className="flex flex-col mt-10 items-center pb-10">
+                    <img className="w-32 h-32 mb-3 rounded-full shadow-lg ring-4 ring-yellow-400 cursor-pointer" src={user.photoURL} alt={user.name} />
+                    <h5 className="mb-1 text-xl font-medium text-gray-900">{user.name}</h5>
+                    <span className="text-sm text-gray-500">Zone {user.zone}</span>
+                    <p className="mt-4 text-gray-800">{user.gratitudes} gratitudes reçues</p>
+                  </div>
+                </div>
+              ))}
             </div>
 
             {/*feeds news*/}

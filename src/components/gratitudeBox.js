@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 
 import { db } from '../firebase'  // Assurez-vous que le chemin est correct
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, query, where, getDocs } from 'firebase/firestore';
 import { auth } from '../firebase';  // Votre configuration firebase
 
 export default function GratitudeBox() {
@@ -34,17 +34,38 @@ export default function GratitudeBox() {
     async function addGratitudeTicket() {
         setIsLoading(true);
 
+        const usersCollectionRef = collection(db, 'utilisateurs'); // Assumant que vous avez une collection 'utilisateurs'
+        const q = query(usersCollectionRef, where('email', '==', gratitudeDestinataire));
+
+        const querySnapshot = await getDocs(q);
+
+        let to_name;
+        let to_photoURL;
+
+        if (!querySnapshot.empty) {
+            const userDoc = querySnapshot.docs[0]; // Obtenir le premier (et normalement unique) document correspondant
+            to_name = userDoc.data().name;
+            to_photoURL = userDoc.data().photoURL;
+        } else {
+            console.error(`Utilisateur avec l'email ${gratitudeDestinataire} non trouvé.`);
+            // Gérer l'erreur, éventuellement en arrêtant la fonction ici
+            return;
+        }
+
         const ticketsCollectionRef = collection(db, 'tickets');
 
         const user = auth.currentUser;
 
+
         try {
             const docRef = await addDoc(ticketsCollectionRef, {
                 from_email: user.email,
-                from_name : user.displayName, //user.name
+                from_name: user.displayName, //user.name
                 from_uid: user.uid,
-                from_photoURL : user.photoURL,
+                from_photoURL: user.photoURL,
                 to_email: gratitudeDestinataire,
+                to_name: to_name,
+                to_photoURL: to_photoURL,
                 gratitude_number: count,
                 message: gratitudeMessage,
                 date: serverTimestamp()  // Ceci ajoutera automatiquement la date et l'heure actuelles en utilisant le timestamp du serveur.

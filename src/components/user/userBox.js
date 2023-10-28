@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { auth, storage, db } from '../../firebase';  // Votre configuration firebase
@@ -6,18 +6,68 @@ import { updateProfile } from "firebase/auth";
 
 import { ref, uploadString, getDownloadURL } from "firebase/storage";
 
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, onSnapshot } from "firebase/firestore";
 
 
 
 function UserBox() {
     const router = useRouter()
 
-    const [showModal, setShowModal] = useState(false);
-
     const user = auth.currentUser;
 
+    const [showModal, setShowModal] = useState(false);
     const [photoUrl, setPhotoUrl] = useState(user ? user.photoURL : null)
+
+    const [zone, setZone] = useState(null);
+
+
+    const [gratitudes, setGratitudes] = useState(0);
+    const [ticketZone, setTicketZone] = useState(0);
+    const [ticketHorsZone, setTicketHorsZone] = useState(0);
+
+    // récupérer la zone utilisateur
+    useEffect(() => {      
+        if (user && user.uid) {
+          const userDocRef = doc(db, 'utilisateurs', user.uid);
+      
+          getDoc(userDocRef).then((docSnapshot) => {
+            if (docSnapshot.exists()) {
+              setZone(docSnapshot.data().zone || null);
+            } else {
+              console.error('Document utilisateur non trouvé.');
+            }
+          }).catch((error) => {
+            console.error('Erreur lors de la récupération de la zone de l\'utilisateur:', error);
+          });
+        }
+      }, [user]);
+      
+
+    //mise à jour des tikcets restants 
+    useEffect(() => {
+        const currentDate = new Date();
+        const currentMonth = `${currentDate.getMonth() + 1}-${currentDate.getFullYear()}`;
+
+        // Assurez-vous que 'user' est défini et qu'il a une propriété 'uid'
+        if (user && user.uid) {
+            const gratitudeDocRef = doc(db, 'utilisateurs', user.uid, currentMonth, 'gratitudeData');
+
+            const unsubscribe = onSnapshot(gratitudeDocRef, (docSnapshot) => {
+                if (docSnapshot.exists()) {
+                    const data = docSnapshot.data();
+
+                    setGratitudes(data.gratitudes || 0);
+                    setTicketZone(data.ticket_zone || 0);
+                    setTicketHorsZone(data.ticket_horszone || 0);
+                } else {
+                    console.error('Document "gratitudeData" non trouvé pour le mois en cours.');
+                }
+            });
+
+            return () => unsubscribe();
+        }
+    }, [user]);  // dépendance sur 'user', donc l'écouteur se réinitialise si 'user' change
+
 
     //update de l'image de profil
     const handleImageChange = (e) => {
@@ -81,38 +131,60 @@ function UserBox() {
     const [isEditing, setIsEditing] = useState(false);
     const [name, setName] = useState(user ? user.displayName : null);
 
-    function handleNameChange() {
+    async function handleNameChange() {
+        // if (!user) {
+        //     console.error("Aucun utilisateur connecté");
+        //     return;
+        // } else {
+        //     updateProfile(user, {
+        //         displayName: name,
+        //         // Vous pouvez également mettre à jour le `photoURL` ou d'autres propriétés si nécessaire
+        //     })
+        //         .then(() => {
+        //             console.log("Nom d'utilisateur mis à jour avec succès");
+        //         })
+        //         .catch(error => {
+        //             console.error("Erreur lors de la mise à jour du nom d'utilisateur :", error);
+        //         });
+        // }
+
         if (!user) {
             console.error("Aucun utilisateur connecté");
-        } else {
-            updateProfile(user, {
-                displayName: name,
-                // Vous pouvez également mettre à jour le `photoURL` ou d'autres propriétés si nécessaire
-            })
-                .then(() => {
-                    console.log("Nom d'utilisateur mis à jour avec succès");
-                })
-                .catch(error => {
-                    console.error("Erreur lors de la mise à jour du nom d'utilisateur :", error);
-                });
+            return;
+        }
+
+        try {
+            // Mise à jour du profil Firebase Auth
+            await updateProfile(user, { displayName: name });
+
+            // Mise à jour du nom d'utilisateur dans Firestore
+            const userDocRef = doc(db, 'utilisateurs', user.uid);
+
+            await updateDoc(userDocRef, { name: name });
+            // !!! pour bien faire il faudrait actualiser le nom dans tous les tickets et dans le top 3
+
+
+            console.log("Nom d'utilisateur mis à jour avec succès dans Firebase Auth et Firestore");
+        } catch (error) {
+            console.error("Erreur lors de la mise à jour du nom d'utilisateur :", error);
         }
         setIsEditing(false)
     }
 
-    const [isEditingZone, setIsEditingZone] = useState(false);
-    const [zone, setZone] = useState("Zone Sud-Ouest");
+    // const [isEditingZone, setIsEditingZone] = useState(false);
+    // const [zone, setZone] = useState("Zone Sud-Ouest");
 
-    const zones = [
-        "Zone Nord",
-        "Zone Sud-Ouest",
-        "Zone Sud-Est",
-        "Zone Ouest",
-        // ... ajoutez d'autres zones si nécessaire
-    ];
+    // const zones = [
+    //     "Zone Nord",
+    //     "Zone Sud-Ouest",
+    //     "Zone Sud-Est",
+    //     "Zone Ouest",
+    //     // ... ajoutez d'autres zones si nécessaire
+    // ];
 
-    function handleSetZone(e) {
-        setZone(e.target.value)
-    }
+    // function handleSetZone(e) {
+    //     setZone(e.target.value)
+    // }
 
     const handleLogout = async () => {
         try {
@@ -171,7 +243,7 @@ function UserBox() {
                     </>
                 )}
             </div>
-            {isEditingZone ? (
+            {/* {isEditingZone ? (
                 <select
                     value={zone}
                     onChange={(e) => handleSetZone(e)}
@@ -192,10 +264,13 @@ function UserBox() {
                 >
                     {zone}
                 </span>
-            )}
+            )} */}
+            <p className="text-sm text-gray-500">Zone {zone}</p>
 
-            <p className="mt-4 text-gray-800">38 gratitudes reçues</p>
-            <p className="mt-2 text-gray-800">92 tickets restants</p>
+            <p className="mt-4 text-gray-800">{gratitudes}  gratitudes reçues</p>
+            <p className="mt-2 text-gray-800">{ticketZone} ticket zone restants</p>
+            <p className="mt-2 text-gray-800">{ticketHorsZone} ticket hors zone restants</p>
+
             <button
                 onClick={handleLogout}
                 className="mt-4 bg-red-500 text-white px-2 py-1 rounded text-xs font-semibold hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-400"
