@@ -79,8 +79,6 @@ function UserPage() {
   // 4. Créez une fonction pour charger plus de tickets
   function loadMoreTickets() {
     fetchTickets();
-
-
   }
 
   //mise à jour du top 3 en temps réel
@@ -173,34 +171,10 @@ function UserPage() {
 
             {/*TOP 3*/}
             <div className="w-full md:flex">
-              {/* <div className="md:w-1/3 ">
-                <div className="flex flex-col mt-10 items-center pb-10">
-                  <img className="w-32 h-32 mb-3 rounded-full shadow-lg ring-4 ring-yellow-400 cursor-pointer" src="/mylene.jpeg" alt="Mylène" />
-                  <h5 className="mb-1 text-xl font-medium text-gray-900 ">Mylène Dupuy Rosso</h5>
-                  <span className="text-sm text-gray-500 ">Zone Sud-Ouest</span>
-                  <p className=" mt-4 text-gray-800 ">38 gratitudes reçues</p>
-                </div>
-              </div>
-              <div className="md:w-1/3">
-                <div className="flex flex-col mt-10 items-center pb-10">
-                  <img onClick={() => router.push('/user/Antoine')} className="w-32 h-32 mb-3 rounded-full shadow-lg ring-4 ring-yellow-400 cursor-pointer" src="/moi2.jpg" alt="Antoine" />
-                  <h5 className="mb-1 text-xl font-medium text-gray-900">Antoine Parat</h5>
-                  <span className="text-sm text-gray-500 ">Zone Sud-Ouest</span>
-                  <p className=" mt-4 text-gray-800 ">29 gratitudes reçues</p>
-                </div>
-              </div>
-              <div className="md:w-1/3">
-                <div className="flex flex-col mt-10 items-center pb-10">
-                  <img onClick={() => router.push('/user/Collaborateur 5')} className="w-32 h-32 mb-3 rounded-full shadow-lg ring-4 ring-yellow-400 cursor-pointer" src="https://www.svgrepo.com/show/382095/female-avatar-girl-face-woman-user-4.svg" alt=" image" />
-                  <h5 className="mb-1 text-xl font-medium text-gray-900">Collaborateur 5</h5>
-                  <span className="text-sm text-gray-500 ">Zone Nord</span>
-                  <p className=" mt-4 text-gray-800 ">21 gratitudes reçues</p>
-                </div>
-              </div> */}
               {top3.map((user, index) => (
                 <div key={index} className="md:w-1/3">
                   <div className="flex flex-col mt-10 items-center pb-10">
-                    <img className="w-32 h-32 mb-3 rounded-full shadow-lg ring-4 ring-yellow-400 cursor-pointer" src={user.photoURL} alt={user.name} />
+                    <img onClick={() => router.push('/user/'+user.email+'?is='+user.user_id)} className="w-32 h-32 mb-3 rounded-full shadow-lg ring-4 ring-yellow-400 cursor-pointer" src={user.photoURL} alt={user.name} />
                     <h5 className="mb-1 text-xl font-medium text-gray-900">{user.name}</h5>
                     <span className="text-sm text-gray-500">Zone {user.zone}</span>
                     <p className="mt-4 text-gray-800">{user.gratitudes} gratitudes reçues</p>

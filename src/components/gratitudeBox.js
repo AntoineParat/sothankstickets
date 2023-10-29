@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 
 import { db } from '../firebase'  // Assurez-vous que le chemin est correct
-import { collection, addDoc, serverTimestamp, query, where, getDocs } from 'firebase/firestore';
+import { collection, addDoc, updateDoc, serverTimestamp, query, where, doc, getDoc, getDocs, increment } from 'firebase/firestore';
 import { auth } from '../firebase';  // Votre configuration firebase
 
 export default function GratitudeBox() {
@@ -29,40 +29,79 @@ export default function GratitudeBox() {
     // Ajout d'un ticket sur firestore et pop up confirmation
     const [gratitudeMessage, setGratitudeMessage] = useState('');
     const [popupType, setPopupType] = useState('success');  // Ajout de cet état
+    const [errorMessage, setErrorMessage] = useState('')
     const [isLoading, setIsLoading] = useState(false)
 
     async function addGratitudeTicket() {
         setIsLoading(true);
 
+        const user = auth.currentUser;
+        if (!user) {
+            console.error("Aucun utilisateur connecté");
+            setIsLoading(false);
+            return;
+        }
+
+        // récupérer le name et la photo du destinataire du ticket
         const usersCollectionRef = collection(db, 'utilisateurs'); // Assumant que vous avez une collection 'utilisateurs'
         const q = query(usersCollectionRef, where('email', '==', gratitudeDestinataire));
-
         const querySnapshot = await getDocs(q);
 
-        let to_name;
-        let to_photoURL;
+        let to_name,to_uid, to_photoURL, to_zone;
 
         if (!querySnapshot.empty) {
             const userDoc = querySnapshot.docs[0]; // Obtenir le premier (et normalement unique) document correspondant
             to_name = userDoc.data().name;
+            to_uid =userDoc.id
             to_photoURL = userDoc.data().photoURL;
+            to_zone = userDoc.data().zone;
         } else {
             console.error(`Utilisateur avec l'email ${gratitudeDestinataire} non trouvé.`);
             // Gérer l'erreur, éventuellement en arrêtant la fonction ici
             return;
         }
 
-        const ticketsCollectionRef = collection(db, 'tickets');
+        // Déterminer le mois en cours
+        const currentDate = new Date();
+        const currentMonth = `${currentDate.getMonth() + 1}-${currentDate.getFullYear()}`;
 
-        const user = auth.currentUser;
+        // Récupérer la zone et le solde des tickets de l'utilisateur actuel
+        const currentUserRef = doc(db, 'utilisateurs', user.uid);
+        const currentUserSnap = await getDoc(currentUserRef);
+        const currentUserMonthDocRef = doc(db, 'utilisateurs', user.uid, currentMonth, 'gratitudeData');
+        const currentUserMonthDocSnap = await getDoc(currentUserMonthDocRef);
 
+        const from_zone = currentUserSnap.data().zone;
+        const ticket_zone = currentUserMonthDocSnap.data().ticket_zone;
+        const ticket_horszone = currentUserMonthDocSnap.data().ticket_horszone;
 
+        // Vérifier si le destinataire est dans la même zone que l'utilisateur actuel
+        const isSameZone = from_zone === to_zone;
+
+        const ticketType = isSameZone ? 'ticket_zone' : 'ticket_horszone';
+        const ticketCount = isSameZone ? ticket_zone : ticket_horszone;
+
+        if (ticketCount < count) {
+            console.error(`Solde insuffisant pour ${ticketType}.`);
+            setErrorMessage('Solde de tickets unsuffisant !')
+            setIsLoading(false);
+            setShowPopup(true);
+            setPopupType('error');
+            setCount(0)
+            setgratitudeDestinataire('')
+            setGratitudeMessage('')
+            return;
+        }
+
+        // enregistrer le ticket
         try {
-            const docRef = await addDoc(ticketsCollectionRef, {
+            const ticketsCollectionRef = collection(db, 'tickets');
+            await addDoc(ticketsCollectionRef, {
                 from_email: user.email,
                 from_name: user.displayName, //user.name
                 from_uid: user.uid,
                 from_photoURL: user.photoURL,
+                to_uid : to_uid,
                 to_email: gratitudeDestinataire,
                 to_name: to_name,
                 to_photoURL: to_photoURL,
@@ -70,6 +109,12 @@ export default function GratitudeBox() {
                 message: gratitudeMessage,
                 date: serverTimestamp()  // Ceci ajoutera automatiquement la date et l'heure actuelles en utilisant le timestamp du serveur.
             });
+
+            // Mettre à jour le solde des tickets
+            await updateDoc(currentUserMonthDocRef, {
+                [ticketType]: increment(-count)  // Décrémenter le solde approprié
+            });
+
             setIsLoading(false)
             setShowPopup(true)
             setPopupType('success');  // Définir le type de popup sur 'success'
@@ -77,8 +122,10 @@ export default function GratitudeBox() {
             setgratitudeDestinataire('')
             setGratitudeMessage('')
         } catch (e) {
+            console.log(e)
             setIsLoading(false)
             setShowPopup(true);
+            setErrorMessage('Une erreur s\'est produite lors de l\'envoi de votre ticket de gratitude.')
             setPopupType('error');
             setCount(0)
             setgratitudeDestinataire('')
@@ -131,7 +178,7 @@ export default function GratitudeBox() {
                         <p className={`${popupType === 'success' ? 'text-green-800' : 'text-red-800'}`} >
                             {popupType === 'success'
                                 ? 'Votre ticket de gratitude a été envoyé avec succès ⭐'
-                                : 'Une erreur s\'est produite lors de l\'envoi de votre ticket de gratitude.'}
+                                : errorMessage}
                         </p>
                     </div>
                 </div>

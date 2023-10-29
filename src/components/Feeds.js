@@ -60,8 +60,7 @@ function TicketGratitude({ ticket }) {
                     A donné <span className='underline decoration-double decoration-yellow-300'>{ticket.gratitude_number}</span> tickets de gratitude à <span className='underline decoration-double decoration-yellow-300'> {ticket.to_email} </span> 💌
                 </div>
             </div>
-            <div className="mb-4 pt-4">{ticket.message}
-            </div>
+            <div className="mb-4 pt-4">{ticket.message} </div>
             <div className='mt-2'>
                 {comments.map((comment, index) => {
                     const commentDate = comment.date ? comment.date.toDate() : new Date();
