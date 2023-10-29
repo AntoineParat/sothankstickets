@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 import Navbar from '../../../components/navbar';
 import TicketFromUser from '../../../components/Feeds';
+import GratitudeToSpecificUser from '../../../components/user/GratitudeToSpecifUser';
 
 
 import { db } from '../../../firebase';
@@ -112,7 +113,7 @@ export default function TicketsPage({ params }) {
   useEffect(() => {
     if (!userId) return;
 
-    let unsubscribeFromGratitudeData = () => {};
+    let unsubscribeFromGratitudeData = () => { };
 
     const fetchUserData = async () => {
       try {
@@ -293,60 +294,7 @@ export default function TicketsPage({ params }) {
           <div className="md:w-3/4 md:ml-4 flex-col">
 
             {/* send gratitude box*/}
-            <div className="bg-white p-4 shadow rounded order-1">
-              <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900  text-xl">Donner des tickets de gratitude à {userData.name}👇</label>
-              {searchTerm && suggestions.length > 0 && showDropdown && (
-                <div className="absolute mt-2 rounded border border-gray-300 bg-white z-10">
-                  {suggestions.map((suggestion, index) => (
-                    <div key={index} onClick={() => {
-                      setSearchTerm(suggestion);
-                      setShowDropdown(false); // si vous utilisez un état pour gérer l'affichage du dropdown
-                    }} className="p-2 hover:bg-gray-200 cursor-pointer">
-                      {suggestion}
-                    </div>
-                  ))}
-                </div>
-              )}
-              {/* tickets counter input*/}
-              <div className="flex mt-2">
-                <button
-                  className="bg-gray-200 p-2 rounded-l-md hover:bg-gray-300"
-                  onClick={handleDecrement}
-                >
-                  -
-                </button>
-                <input
-                  // type="number"
-                  placeholder="nombre tickets"
-                  className="bg-white rounded border p-2 w-36 text-center"
-                  onChange={e => setNumberOfTickets(e.target.value)}
-                  value={count === 0 ? "" : count}
-                />
-                <button
-                  className="bg-gray-200 p-2 rounded-r-md hover:bg-gray-300"
-                  onClick={handleIncrement}
-                >
-                  +
-                </button>
-              </div>
-
-              {/* textarea commentaire de gratitude */}
-              <div className="border-b pb-4 mb-4 mt-2">
-                <textarea
-                  rows="4"
-                  className="w-full p-2 rounded border"
-                  placeholder="Message de gratitude...">
-                </textarea>
-                <button className="bg-blue-500 text-white rounded px-4 py-2 mt-2">
-                  Envoyer 💌
-                </button>
-              </div>
-
-              {/* Feed/Posts */}
-              <div>
-                {/* Single Post */}
-              </div>
-            </div>
+            {userData && <GratitudeToSpecificUser userData={userData} userId={userId}/>}
 
             {/*feeds news*/}
             <div className="border-t p-2 border-b pb-4 mt-4">
