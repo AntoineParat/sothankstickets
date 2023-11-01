@@ -13,7 +13,7 @@ export default function Navbar() {
     useEffect(() => {
         // Lancer la recherche uniquement si searchTerm a au moins 3 caractères
         if (searchTerm.length >= 3) {
-            fetch(`https://suggestion.algosearch.workers.dev/?search=${encodeURIComponent(searchTerm)}`)
+            fetch(`https://suggestion.algosearch.workers.dev/?search=${encodeURIComponent(searchTerm)}&token=process.env.NEXT_PUBLIC_API_KEY`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Problème lors de la récupération des suggestions');

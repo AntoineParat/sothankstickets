@@ -140,7 +140,7 @@ export default function GratitudeBox() {
     useEffect(() => {
         // Lancer la recherche uniquement si searchTerm a au moins 3 caractères
         if (gratitudeDestinataire.length >= 3) {
-            fetch(`https://suggestion.algosearch.workers.dev/?search=${encodeURIComponent(gratitudeDestinataire)}`)
+            fetch(`https://suggestion.algosearch.workers.dev/?search=${encodeURIComponent(gratitudeDestinataire)}&token=process.env.NEXT_PUBLIC_API_KEY`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Problème lors de la récupération des suggestions');
