@@ -47,12 +47,12 @@ export default function GratitudeBox() {
         const q = query(usersCollectionRef, where('email', '==', gratitudeDestinataire));
         const querySnapshot = await getDocs(q);
 
-        let to_name,to_uid, to_photoURL, to_zone;
+        let to_name, to_uid, to_photoURL, to_zone;
 
         if (!querySnapshot.empty) {
             const userDoc = querySnapshot.docs[0]; // Obtenir le premier (et normalement unique) document correspondant
             to_name = userDoc.data().name;
-            to_uid =userDoc.id
+            to_uid = userDoc.id
             to_photoURL = userDoc.data().photoURL;
             to_zone = userDoc.data().zone;
         } else {
@@ -101,7 +101,7 @@ export default function GratitudeBox() {
                 from_name: user.displayName, //user.name
                 from_uid: user.uid,
                 from_photoURL: user.photoURL,
-                to_uid : to_uid,
+                to_uid: to_uid,
                 to_email: gratitudeDestinataire,
                 to_name: to_name,
                 to_photoURL: to_photoURL,
@@ -132,17 +132,28 @@ export default function GratitudeBox() {
             setGratitudeMessage('')
         }
     }
+
     // suggeion adresses email
-    const [showDropdown, setShowDropdown] = useState(false)
     const [gratitudeDestinataire, setgratitudeDestinataire] = useState('');
     const [suggestions, setSuggestions] = useState([]);
 
     useEffect(() => {
-        if (gratitudeDestinataire) {
-            // Ici, fetchez vos suggestions à partir de votre API ou autre source.
-            // Pour cet exemple, utilisons une liste de données factices.
-            const dummyData = ['suggestion1@acadomia.fr', 'suggestion2@acadomia.fr'];
-            setSuggestions(dummyData);
+        // Lancer la recherche uniquement si searchTerm a au moins 3 caractères
+        if (gratitudeDestinataire.length >= 3) {
+            fetch(`https://suggestion.algosearch.workers.dev/?search=${encodeURIComponent(gratitudeDestinataire)}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Problème lors de la récupération des suggestions');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    setSuggestions(data);
+                })
+                .catch(error => {
+                    console.error('Erreur lors de la récupération des suggestions:', error);
+                    setSuggestions([]);
+                });
         } else {
             setSuggestions([]);
         }
@@ -187,15 +198,13 @@ export default function GratitudeBox() {
             <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900  text-xl">Envoi de gratitude👇</label>
             <input type="search" value={gratitudeDestinataire} onChange={(e) => {
                 setgratitudeDestinataire(e.target.value);
-                setShowDropdown(true)
             }}
-                aria-describedby="helper-text-explanation" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="collaborateur@acadomia.fr" />
-            {gratitudeDestinataire && suggestions.length > 0 && showDropdown && (
+            aria-describedby="helper-text-explanation" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="collaborateur@acadomia.fr" />
+            {gratitudeDestinataire && suggestions.length > 0 && (
                 <div className="absolute mt-2 rounded border border-gray-300 bg-white z-10">
                     {suggestions.map((suggestion, index) => (
                         <div key={index} onClick={() => {
                             setgratitudeDestinataire(suggestion);
-                            setShowDropdown(false); // si vous utilisez un état pour gérer l'affichage du dropdown
                         }} className="p-2 hover:bg-gray-200 cursor-pointer">
                             {suggestion}
                         </div>

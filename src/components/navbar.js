@@ -11,11 +11,22 @@ export default function Navbar() {
     const [suggestions, setSuggestions] = useState([]);
 
     useEffect(() => {
-        if (searchTerm) {
-            // Ici, fetchez vos suggestions à partir de votre API ou autre source.
-            // Pour cet exemple, utilisons une liste de données factices.
-            const dummyData = ['Emilie', 'cécile', 'Antoine', 'Béatrice'];
-            setSuggestions(dummyData);
+        // Lancer la recherche uniquement si searchTerm a au moins 3 caractères
+        if (searchTerm.length >= 3) {
+            fetch(`https://suggestion.algosearch.workers.dev/?search=${encodeURIComponent(searchTerm)}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Problème lors de la récupération des suggestions');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    setSuggestions(data);
+                })
+                .catch(error => {
+                    console.error('Erreur lors de la récupération des suggestions:', error);
+                    setSuggestions([]);
+                });
         } else {
             setSuggestions([]);
         }
@@ -39,12 +50,20 @@ export default function Navbar() {
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="block w-full p-3 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-slate-50 focus:ring-blue-500 focus:border-blue-500" placeholder="recherche par adresse mail" required
                     />
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                        <button
+                            onClick={() => {router.push("/user/" + searchTerm) }}
+                            className="p-2 text-sm bg-blue-500 text-white rounded"
+                        >
+                            OK
+                        </button>
+                    </div>
                     {searchTerm && suggestions.length > 0 && (
                         <div className="absolute mt-2 w-full rounded border border-gray-300 bg-white z-10">
                             {suggestions.map((suggestion, index) => (
                                 <div key={index} onClick={() => {
                                     setSearchTerm(suggestion);
-                                    router.push("/user/"+suggestion)
+                                    router.push("/user/" + suggestion)
                                 }}
                                     className="p-2 hover:bg-gray-200 cursor-pointer">
                                     {suggestion}

@@ -20,6 +20,8 @@ export default function Home() {
 
   const [isLoading, setIsLoading] = useState(false);
 
+  // <----------- SIGN IN -------------->
+
   const handleSignIn = (e) => {
     e.preventDefault(); // Empêche le rechargement de la page
 
@@ -49,6 +51,8 @@ export default function Home() {
 
     firebaseLogin(formData)
   };
+
+    // <------------- SIGN UP ------------->
 
   const handleSignUp = (e) => {
     e.preventDefault(); // Empêche le rechargement de la page
@@ -128,33 +132,6 @@ export default function Home() {
       }
       setIsLoading(false);
     }
-
-    // firebaseSignUp(formData)
-
-    // async function firebaseSignUp(formData) {
-    //   try {
-    //     const response = await fetch("https://europe-west3-sothankstickets.cloudfunctions.net/signUp", {
-    //       method: "POST",
-    //       headers: {
-    //         "Content-Type": "application/json",
-    //       },
-    //       body: JSON.stringify(formData),
-    //     });
-
-    //     const data = await response.json();
-
-    //     if (data.success) {
-    //       console.log("Inscription réussie avec l'ID utilisateur:", data.userId);
-    //       router.push('/user');
-    //     } else {
-    //       console.error("Erreur lors de l'inscription:", data.error);
-    //     }
-    //   } catch (error) {
-    //     console.error("Erreur lors de la communication avec la fonction Cloud:", error);
-    //   }
-    // }
-
-
   };
 
   function isValidEmail(email) {

@@ -171,16 +171,22 @@ function UserPage() {
 
             {/*TOP 3*/}
             <div className="w-full md:flex">
-              {top3.map((user, index) => (
-                <div key={index} className="md:w-1/3">
-                  <div className="flex flex-col mt-10 items-center pb-10">
-                    <img onClick={() => router.push('/user/'+user.email+'?is='+user.user_id)} className="w-32 h-32 mb-3 rounded-full shadow-lg ring-4 ring-yellow-400 cursor-pointer" src={user.photoURL} alt={user.name} />
-                    <h5 className="mb-1 text-xl font-medium text-gray-900">{user.name}</h5>
-                    <span className="text-sm text-gray-500">Zone {user.zone}</span>
-                    <p className="mt-4 text-gray-800">{user.gratitudes} gratitudes reçues</p>
-                  </div>
+              {top3.length === 0 ? (
+                <div className="text-center mt-10">
+                  <p className="text-lg text-gray-800">Les compteurs sont à 0</p>
                 </div>
-              ))}
+              ) : (
+                top3.map((user, index) => (
+                  <div key={index} className="md:w-1/3">
+                    <div className="flex flex-col mt-10 items-center pb-10">
+                      <img onClick={() => router.push('/user/' + user.email + '?is=' + user.user_id)} className="w-32 h-32 mb-3 rounded-full shadow-lg ring-4 ring-yellow-400 cursor-pointer" src={user.photoURL} alt={user.name} />
+                      <h5 className="mb-1 text-xl font-medium text-gray-900">{user.name}</h5>
+                      <span className="text-sm text-gray-500">Zone {user.zone}</span>
+                      <p className="mt-4 text-gray-800">{user.gratitudes} gratitudes reçues</p>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
 
             {/*feeds news*/}
