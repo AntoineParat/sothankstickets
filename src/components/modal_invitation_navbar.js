@@ -2,7 +2,6 @@ import React from 'react';
 import { useEffect, useState } from 'react';
 
 function UserModal ({ email, isOpen, onClose, onInvite }) {
-    if (!isOpen) return null;
 
     const [name, setName] = useState('')
 
@@ -15,6 +14,8 @@ function UserModal ({ email, isOpen, onClose, onInvite }) {
 
         setName(prenom)
     }, [])
+
+    if (!isOpen) return null;
 
     return (
         <>
