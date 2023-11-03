@@ -32,7 +32,31 @@ export default function GratitudeBox() {
     const [errorMessage, setErrorMessage] = useState('')
     const [isLoading, setIsLoading] = useState(false)
 
+    function onInvit() {
+        setIsLoading(true)
+        //check email adress
+        //send invitation to email adress
+        setTimeout(() => {
+            setIsLoading(false);
+            //logique envoi email
+            alert("email envoyé");
+            setgratitudeDestinataire('')
+        }, 2000);
+    }
+
     async function addGratitudeTicket() {
+        // check if acadomia member
+        const isValidEmail = /^[a-zA-Z0-9._-]+@acadomia\.fr$/.test(gratitudeDestinataire);
+        if (!isValidEmail) {
+            setErrorMessage('Adresse mail non valide')
+            setPopupType('error');
+            return setShowPopup(true);
+        }
+
+        if (suggestions.length === 0) {
+            return onInvit()
+        }
+
         setIsLoading(true);
 
         const user = auth.currentUser;
@@ -194,12 +218,15 @@ export default function GratitudeBox() {
                     </div>
                 </div>
             )}
-
+            <form onSubmit={(e) => {
+                e.preventDefault(); // Prévient le comportement par défaut du formulaire
+                addGratitudeTicket(); 
+            }}>
             <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900  text-xl">Envoi de gratitude👇</label>
-            <input type="search" value={gratitudeDestinataire} onChange={(e) => {
+            <input type="search" required value={gratitudeDestinataire} onChange={(e) => {
                 setgratitudeDestinataire(e.target.value);
             }}
-            aria-describedby="helper-text-explanation" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="collaborateur@acadomia.fr" />
+                aria-describedby="helper-text-explanation" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="collaborateur@acadomia.fr" />
             {gratitudeDestinataire && suggestions.length > 0 && (
                 <div className="absolute mt-2 rounded border border-gray-300 bg-white z-10">
                     {suggestions.map((suggestion, index) => (
@@ -225,6 +252,7 @@ export default function GratitudeBox() {
                     className="bg-white rounded border p-2 w-36 text-center"
                     onChange={e => setNumberOfTickets(e.target.value)}
                     value={count === 0 ? "" : count}
+                    required
                 />
                 <button
                     className="bg-gray-200 p-2 rounded-r-md hover:bg-gray-300"
@@ -243,11 +271,11 @@ export default function GratitudeBox() {
                     value={gratitudeMessage}
                     onChange={(e) => setGratitudeMessage(e.target.value)}>
                 </textarea>
-                <button onClick={() => addGratitudeTicket()} className="bg-blue-500 text-white rounded px-4 py-2 mt-2">
+                <button type="submit" className="bg-blue-500 text-white rounded px-4 py-2 mt-2">
                     Envoyer 💌
                 </button>
             </div>
-
+            </form>
             {/* Feed/Posts */}
             <div>
                 {/* Single Post */}

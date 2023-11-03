@@ -10,7 +10,9 @@ import { db, auth } from '../../../firebase';  // Assurez-vous que le chemin est
 
 import {
     collection,
+    doc,
     getDocs,
+    updateDoc,
     query,
     orderBy,
     startAfter,
@@ -21,7 +23,9 @@ import {
 export default function Ticketsrecus() {
 
     const [tickets, setTickets] = useState([]);
-    const userEmail = auth.currentUser.email;
+
+    const user = auth.currentUser
+    const userEmail = user.email;
 
     const fetchInProgress = useRef(false);
 
@@ -31,6 +35,23 @@ export default function Ticketsrecus() {
             fetchInProgress.current = true;
         }
     }, []);
+
+    //Mettre à 0 le compteur des tickets non-lu
+    useEffect(() => {    
+        if (user) {
+          // Récupère la référence du document de l'utilisateur
+          const userDocRef = doc(db, 'utilisateurs', user.uid);
+    
+          // Mettre à jour le compteur des tickets non lus à 0
+          updateDoc(userDocRef, {
+            tickets_non_lus: 0
+          }).then(() => {
+            console.log("Compteur des tickets non lus mis à jour.");
+          }).catch(error => {
+            console.error("Erreur lors de la mise à jour du compteur des tickets non lus: ", error);
+          });
+        }
+      }, []);
 
     const [lastDoc, setLastDoc] = useState(null);
     const [allTicketsLoaded, setAllTicketsLoaded] = useState(false);

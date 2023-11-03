@@ -42,7 +42,7 @@ export default function TicketsPage({ params }) {
         setError('Aucun ticket trouvé pour cet e-mail.');
         return; // Terminez ici si aucun ticket n'est trouvé
       }
-
+      console.log('chargement des tickets')
       const ticketsData = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
