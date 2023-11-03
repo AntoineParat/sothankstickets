@@ -20,6 +20,7 @@ function UserPage() {
 
   // Mise en place d'un écouteur pour les nouveaux tickets realtime
   useEffect(() => {
+    console.log("use effect chargement tickets")
     fetchTickets();
     const q = query(
       collection(db, "tickets"),
@@ -46,6 +47,7 @@ function UserPage() {
 
   // 2. Créez une fonction pour récupérer les tickets
   async function fetchTickets() {
+    console.log("fetch tikcets")
     let q;
     if (lastDoc) {
       q = query(
