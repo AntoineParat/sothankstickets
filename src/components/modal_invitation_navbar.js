@@ -1,7 +1,7 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
 
-const userModal = ({ email, isOpen, onClose, onInvite }) => {
+function UserModal ({ email, isOpen, onClose, onInvite }) {
     if (!isOpen) return null;
 
     const [name, setName] = useState('')
@@ -62,4 +62,4 @@ const userModal = ({ email, isOpen, onClose, onInvite }) => {
     );
 };
 
-export default userModal;
+export default UserModal;
