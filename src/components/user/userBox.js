@@ -199,7 +199,7 @@ function UserBox() {
         <div className="flex flex-col mt-10 items-center pb-10">
             {/* user photo */}
             <div className="relative group cursor-pointer">
-                <img className="w-32 h-32 mb-3 rounded-full shadow-lg ring-4 ring-yellow-400" src={photoUrl} alt="Mylène" />
+                <img className="w-32 h-32 mb-3 rounded-full shadow-lg ring-4 ring-yellow-400" src={photoUrl} alt="profil" />
                 <div
                     className="absolute inset-0 flex justify-center items-center opacity-0 group-hover:opacity-100"
                     onClick={handleImageClick}

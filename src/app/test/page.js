@@ -14,7 +14,7 @@ function EmailForm() {
         formData.append('email', email);
 
         try {
-          const response = await fetch('https://suggestion.algosearch.workers.dev/record', {
+          const response = await fetch('https://suggestion.algosearch.workers.dev/record?token=jRCsWu8aVyIwWhNLEs1x', {
             method: 'POST',
             body: formData
           });

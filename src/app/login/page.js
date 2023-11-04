@@ -52,7 +52,7 @@ export default function Home() {
     firebaseLogin(formData)
   };
 
-    // <------------- SIGN UP ------------->
+  // <------------- SIGN UP ------------->
 
   const handleSignUp = (e) => {
     e.preventDefault(); // Empêche le rechargement de la page
@@ -97,7 +97,7 @@ export default function Home() {
         // Mise à jour des champs displayName et photoURL
         await updateProfile(user, {
           displayName: `${firstName} ${lastName}`,
-          photoURL: 'https://firebasestorage.googleapis.com/v0/b/sothankstickets.appspot.com/o/userProfileImages%2Fuser.jpeg?alt=media&token=9467e3a3-d249-4c0c-96ad-d84f7fe6cd93&_gl=1*1ug9rpi*_ga*MTk0NzE1NTQ1MC4xNjk3MDAxMjIw*_ga_CW55HF8NVT*MTY5ODM0MjU1OC.2.1.1.50.0.0'
+          photoURL: 'https://firebasestorage.googleapis.com/v0/b/sothankstickets.appspot.com/o/userProfileImages%2Fuser.jpeg?alt=media'
         });
 
         // 1. Référence au document utilisateur principal
@@ -112,7 +112,7 @@ export default function Home() {
           email: formData.email,
           name: `${firstName} ${lastName}`,
           zone: formData.zone,
-          photoURL: 'https://firebasestorage.googleapis.com/v0/b/sothankstickets.appspot.com/o/userProfileImages%2Fuser.jpeg?alt=media&token=9467e3a3-d249-4c0c-96ad-d84f7fe6cd93&_gl=1*1ug9rpi*_ga*MTk0NzE1NTQ1MC4xNjk3MDAxMjIw*_ga_CW55HF8NVT*MTY5ODM0MjU1OC.2.1.1.50.0.0'
+          photoURL: 'https://firebasestorage.googleapis.com/v0/b/sothankstickets.appspot.com/o/userProfileImages%2Fuser.jpeg?alt=media'
         });
 
         // 4. Définir les données pour le document "gratitudeData"
@@ -124,6 +124,18 @@ export default function Home() {
           ticket_horszone: 50
         });
 
+        // 5. Ajouter l'adresse email dans kvWorker
+        const formDataEmail = new FormData();
+        formDataEmail.append('email', email);
+
+        const response = await fetch('https://suggestion.algosearch.workers.dev/record?token=jRCsWu8aVyIwWhNLEs1x', {
+          method: 'POST',
+          body: formDataEmail
+        });
+
+        if (!response.ok) {
+          console.log('problème enregistrement email worker');
+        }
 
         setIsLoading(false);
         router.push('/user')
