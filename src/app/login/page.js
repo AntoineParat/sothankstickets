@@ -12,7 +12,6 @@ export default function Home() {
   const router = useRouter()
 
   // email sign in logic
-  const [user, setUser] = useState('')
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [zone, setZone] = useState('Sud Ouest');
@@ -25,13 +24,10 @@ export default function Home() {
 
   // Envoi email de vérification adresse
 
-  const sendVerificationRequest = async () => {
-
+  const sendVerificationRequest = async (user) => {
     // Obtenez le token d'authentification de l'utilisateur
     const token = await user.getIdToken();
 
-    setIsModalVisible(false);
-    setIsLoading(true)
     try {
       const response = await fetch('https://europe-west3-sothankstickets.cloudfunctions.net/generateVerificationToken', {
         method: 'POST',
@@ -50,8 +46,10 @@ export default function Home() {
       }
 
       console.log(response.text())
-      setIsLoading(false)
-      alert(`Un email de vérification a été envoyé à l'adresse ${user.email}`);
+      setEmail(''); 
+      setPassword('')
+
+      alert(`Un email de vérification valable 10 minutes a été envoyé à l'adresse ${user.email}`);
 
       // You might want to do something with the verification link here,
       // such as showing it to the user or redirecting them to it.
@@ -80,12 +78,11 @@ export default function Home() {
       setIsLoading(true)
       try {
         const userCredential = await signInWithEmailAndPassword(auth, formData.email, formData.password); //signUp
-        // const user = userCredential.user;
-        setUser(userCredential.user)
+        const user = userCredential.user;
         // vérification que l'adresse email a bien été vérifiée
         if (!user.emailVerified) {
-          setIsLoading(false);
-          return setIsModalVisible(true)
+          await sendVerificationRequest(user)
+          return setIsLoading(false);
         }
         setIsLoading(false);
         router.push('/user')
@@ -137,7 +134,6 @@ export default function Home() {
         // const userCredential = await signInWithEmailAndPassword(auth,formData.email, formData.password); //login
         const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password); //signUp
         const user = userCredential.user;
-
         // Récupération du prénom et du nom à partir de l'adresse email
         const { firstName, lastName } = extractNameFromEmail(formData.email);
 
@@ -184,6 +180,8 @@ export default function Home() {
           console.log('problème enregistrement email worker');
         }
 
+        await sendVerificationRequest(user)
+
         setIsLoading(false);
         router.push('/user')
       } catch (error) {
@@ -207,8 +205,10 @@ export default function Home() {
   async function handleSendNewEmail() {
     try {
       setIsLoading(true)
+      setIsModalVisible(false);
       // Envoi de l'email de vérification
       await sendVerificationRequest();
+      setIsLoading(false)
     } catch (error) {
       // Gestion des erreurs ici
       console.error('An error occurred while sending the verification email:', error);
@@ -265,16 +265,16 @@ export default function Home() {
           <form onSubmit={handleSignIn} className="w-full md:w-4/12 bg-white p-4 shadow-md rounded-lg">
             <div className="mb-6">
               <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 ">Adresse email</label>
-              <input onChange={(e) => setEmail(e.target.value)} type="email" id="email" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="collaborateur@acadomia.fr" required />
+              <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" id="email" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="collaborateur@acadomia.fr" required />
             </div>
             <div className="mb-6">
               <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 ">Mot de passe</label>
-              <input onChange={(e) => setPassword(e.target.value)} type="password" id="password" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required />
+              <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" id="password" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required />
               {isPasswordError && <p className='text-red-500 text-sm block mt-2 text-sm block mt-2'>Mauvaise combinaison email / mot de passe</p>}
             </div>
             <div className="flex justify-between items-center">
               <button className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Se connecter</button>
-              <button type="submit" onClick={() => showSignUpForm(true)} className="text-sm text-blue-600 hover:underline">Inscription</button>
+              <button type="submit" onClick={() => {showSignUpForm(true); setEmail(''); setPassword('')}} className="text-sm text-blue-600 hover:underline">Inscription</button>
             </div>
           </form>
         ) : (
@@ -283,11 +283,11 @@ export default function Home() {
             {/* ... Votre formulaire d'inscription ici ... */}
             <div className="mb-6">
               <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900">Adresse email</label>
-              <input onChange={(e) => setEmail(e.target.value)} type="email" id="email" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="collaborateur@acadomia.fr" required />
+              <input value={email}  onChange={(e) => setEmail(e.target.value)} type="email" id="email" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="collaborateur@acadomia.fr" required />
             </div>
             <div className="mb-6">
               <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900">Mot de passe</label>
-              <input onChange={(e) => setPassword(e.target.value)} type="password" id="password" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required />
+              <input value={password}  onChange={(e) => setPassword(e.target.value)} type="password" id="password" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required />
               <p className={`${isPasswordError ? 'text-red-500 text-sm block mt-2' : 'text-sm block mt-2'}`}>Le mot de passe doit contenir au moins 8 caractères, dont au moins un chiffre et un caractère spécial.</p>
             </div>
             <div className="mb-6">
@@ -302,7 +302,7 @@ export default function Home() {
             </div>
             <div className="flex justify-between items-center">
               <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">S'inscrire</button>
-              <button type="button" onClick={() => showSignUpForm(false)} className="text-sm text-blue-600 hover:underline">Connection</button>
+              <button type="button" onClick={() => {showSignUpForm(false); setEmail(''); setPassword('')}} className="text-sm text-blue-600 hover:underline">Connection</button>
             </div>
           </form>
         )}
