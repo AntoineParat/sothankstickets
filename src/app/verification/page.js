@@ -17,6 +17,10 @@ export default function VerificationEmail() {
 
     useEffect(() => {
         // Définir une fonction asynchrone pour appeler l'API
+        if (!user_id && !token) {
+            alert('vérification impossible')
+            return router.replace('/login')
+        }
         const verifyToken = async () => {
             try {
                 const response = await fetch('https://europe-west3-sothankstickets.cloudfunctions.net/verifyEmailToken', {
