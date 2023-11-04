@@ -12,6 +12,7 @@ export default function Home() {
   const router = useRouter()
 
   // email sign in logic
+  const [user, setUser] = useState('')
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [zone, setZone] = useState('Sud Ouest');
@@ -19,6 +20,46 @@ export default function Home() {
   const [showAlert, setShowAlert] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
+
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  // Envoi email de vérification adresse
+
+  const sendVerificationRequest = async () => {
+
+    // Obtenez le token d'authentification de l'utilisateur
+    const token = await user.getIdToken();
+
+    setIsModalVisible(false);
+    setIsLoading(true)
+    try {
+      const response = await fetch('https://europe-west3-sothankstickets.cloudfunctions.net/generateVerificationToken', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` // Ajoutez le token ici
+        },
+        body: JSON.stringify({
+          user_id: user.uid,
+          user_email: user.email
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      console.log(response.text())
+      setIsLoading(false)
+      alert(`Un email de vérification a été envoyé à l'adresse ${user.email}`);
+
+      // You might want to do something with the verification link here,
+      // such as showing it to the user or redirecting them to it.
+    } catch (error) {
+      alert("Erreur vérification email. Contactez antoine.parat@acadomia.fr")
+      console.error('Failed to send verification request:', error);
+    }
+  };
 
   // <----------- SIGN IN -------------->
 
@@ -39,7 +80,13 @@ export default function Home() {
       setIsLoading(true)
       try {
         const userCredential = await signInWithEmailAndPassword(auth, formData.email, formData.password); //signUp
-        const user = userCredential.user;
+        // const user = userCredential.user;
+        setUser(userCredential.user)
+        // vérification que l'adresse email a bien été vérifiée
+        if (!user.emailVerified) {
+          setIsLoading(false);
+          return setIsModalVisible(true)
+        }
         setIsLoading(false);
         router.push('/user')
       } catch (error) {
@@ -157,7 +204,16 @@ export default function Home() {
     return regex.test(password);
   }
 
-
+  async function handleSendNewEmail() {
+    try {
+      setIsLoading(true)
+      // Envoi de l'email de vérification
+      await sendVerificationRequest();
+    } catch (error) {
+      // Gestion des erreurs ici
+      console.error('An error occurred while sending the verification email:', error);
+    }
+  }
 
 
   // sign in / signup
@@ -183,6 +239,17 @@ export default function Home() {
             <p className="text-red-800 mb-4">Vous devez utiliser votre adresse Acadomia.</p>
             <button onClick={() => setShowAlert(false)} className="text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded focus:outline-none">
               OK</button>
+          </div>
+        </div>
+      )}
+      {/* Modal email non vérifié */}
+      {isModalVisible && (
+        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50">
+          <div className="absolute top-0 left-0 w-full h-full bg-black opacity-50"></div>
+          <div className="bg-red-100 p-8 shadow-xl rounded-lg z-10">
+            <p className="text-red-800 mb-4">Votre adresse email n'est pas vérifiée.</p>
+            <button onClick={() => handleSendNewEmail()} className="text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded focus:outline-none">
+              Envoyer un email de vérification</button>
           </div>
         </div>
       )}
