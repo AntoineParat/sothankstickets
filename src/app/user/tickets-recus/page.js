@@ -25,12 +25,13 @@ export default function Ticketsrecus() {
     const [tickets, setTickets] = useState([]);
 
     const user = auth.currentUser
-    const userEmail = user.email;
+    // const userEmail = user.email
+    const userEmail = user ? user.email : null;  // Utiliser une opération de court-circuit pour vérifier si `user` existe.
 
     const fetchInProgress = useRef(false);
 
     useEffect(() => {
-        if (!fetchInProgress.current) {
+        if (!fetchInProgress.current && userEmail) { // ajout de && usermeail pour ne pas accéder à currentuser quand il est null
             fetchTickets();
             fetchInProgress.current = true;
         }

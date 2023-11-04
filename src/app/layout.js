@@ -46,8 +46,8 @@
 
 import './globals.css'
 import { Inter } from 'next/font/google'
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';  // <-- Ajout de ceci
+import { useRouter, usePathname } from 'next/navigation';
+import { useEffect } from 'react'; 
 
 import { AuthProvider, useAuth } from '../authContext';
 
@@ -56,15 +56,17 @@ const inter = Inter({ subsets: ['latin'] });
 function LayoutContent({ children }) {
   const { loading, currentUser } = useAuth();
   const router = useRouter();
+  const pathname = usePathname()
 
   useEffect(() => {
     if (!loading) {
       if (!currentUser) {
-        router.push('/login');
-        return;
+        if (!['/reset-password', '/verification'].includes(pathname)) {
+          router.push('/login');
+        }
       }
     }
-  }, [currentUser, loading, router]);
+  }, [currentUser, loading, pathname]);
 
   if (loading) {
     return (
