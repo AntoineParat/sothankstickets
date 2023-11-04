@@ -97,7 +97,7 @@ export default function Home() {
         // Mise à jour des champs displayName et photoURL
         await updateProfile(user, {
           displayName: `${firstName} ${lastName}`,
-          photoURL: 'https://firebasestorage.googleapis.com/v0/b/sothankstickets.appspot.com/o/userProfileImages%2Fuser.jpeg?alt=media'
+          photoURL: 'https://firebasestorage.googleapis.com/v0/b/sothankstickets.appspot.com/o/userProfileImages%2Fuser.jpg?alt=media'
         });
 
         // 1. Référence au document utilisateur principal
@@ -112,7 +112,7 @@ export default function Home() {
           email: formData.email,
           name: `${firstName} ${lastName}`,
           zone: formData.zone,
-          photoURL: 'https://firebasestorage.googleapis.com/v0/b/sothankstickets.appspot.com/o/userProfileImages%2Fuser.jpeg?alt=media'
+          photoURL: 'https://firebasestorage.googleapis.com/v0/b/sothankstickets.appspot.com/o/userProfileImages%2Fuser.jpg?alt=media'
         });
 
         // 4. Définir les données pour le document "gratitudeData"
