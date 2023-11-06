@@ -4,8 +4,10 @@ import Link from 'next/link'
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { db, auth } from '../firebase'  // Assurez-vous que le chemin est correct
+import { db, auth, functions } from '../firebase'  // Assurez-vous que le chemin est correct
 import { doc, onSnapshot } from "firebase/firestore";
+import { httpsCallable } from 'firebase/functions';
+
 
 import UserModal from './modal_invitation_navbar';
 
@@ -35,21 +37,35 @@ export default function Navbar() {
         // check if acadomia member
         const isValidEmail = /^[a-zA-Z0-9._-]+@acadomia\.fr$/.test(searchTerm);
         if (!isValidEmail) {
-            console.log("non valide")
             handleCloseModal()
             return alert("Adresse email non valide")
         }
-        console.log("Inviter le collaborateur", searchTerm);
         // Logique d'invitation...
         handleCloseModal()
         setIsLoading(true)
-        //Envoie d'email
-        setTimeout(() => {
+
+        //Envoie d'email :
+        // Créez une référence à votre fonction cloud
+        const sendEmail = httpsCallable(functions, 'sendEmail');
+
+        // Appelez la fonction avec les données nécessaires
+        try {
+            // const from_name = user.displayName;
+            // const to_email = searchTerm;
+            // const result = await sendEmail(); // {to_email, from_name}
+            // Résultat de la fonction cloud
+            // console.log(result.data);
             setIsLoading(false);
-            alert("email envoyé");
             setSearchTerm('')
-        }, 2000); // 2000ms = 2s
-        // setIsLoading(false)
+            alert("email envoyé");
+            return ;
+        } catch (error) {
+            // Gérer les erreurs ici
+            setIsLoading(false);
+            setSearchTerm('')
+            console.error("Error calling sendEmail function:", error);
+            throw error;
+        }
     };
 
     //charger le nombre de tickets non lus et ne pas actualiser
@@ -116,6 +132,9 @@ export default function Navbar() {
     }, [searchTerm]);
 
     function handleUserSearch() {
+        if (searchTerm.length === 0) {
+            return
+        }
         if (suggestions.length === 0) { // utilisiteur inconnu 
             return setModalOpen(true) //show invitation modal
         }
