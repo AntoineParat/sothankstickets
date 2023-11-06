@@ -184,7 +184,7 @@ export default function GratitudeBox() {
                     console.error('Erreur lors de la récupération des suggestions:', error);
                     setSuggestions([]);
                 });
-        } else {
+        } else {g
             setSuggestions([]);
         }
     }, [gratitudeDestinataire]);
