@@ -10,6 +10,9 @@ import { confirmPasswordReset } from "firebase/auth";
 
 export default function ResetMail() {
     //si pas de token -> redirect
+    const router = useRouter();
+    const searchParams = useSearchParams()
+
     const oobCode = searchParams.get('oobCode');
     useEffect(() => {
         if (!oobCode) {
@@ -17,9 +20,6 @@ export default function ResetMail() {
             return router.replace('/login')
         }
     }, []);
-
-    const router = useRouter();
-    const searchParams = useSearchParams()
 
     const [isLoading, setIsLoading] = useState(false)
     const [showAlert, setShowAlert] = useState(false)
