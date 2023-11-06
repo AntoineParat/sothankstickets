@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useRouter, useSearchParams } from 'next/navigation';
 import Link from "next/link";
 
 import { auth } from '../../firebase';
@@ -9,6 +9,15 @@ import { confirmPasswordReset } from "firebase/auth";
 
 
 export default function ResetMail() {
+    //si pas de token -> redirect
+    const oobCode = searchParams.get('oobCode');
+    useEffect(() => {
+        if (!oobCode) {
+            alert('Réinitialisation impossible')
+            return router.replace('/login')
+        }
+    }, []);
+
     const router = useRouter();
     const searchParams = useSearchParams()
 
@@ -26,7 +35,6 @@ export default function ResetMail() {
         }
         // Mise à jour password
         try {
-            const oobCode = searchParams.get('oobCode');
             // await confirmPasswordReset(auth, oobCode, password);
             setIsLoading(false)
             setShowAlert(true)
@@ -40,7 +48,7 @@ export default function ResetMail() {
     function isValidPassword(password) {
         const regex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+).{8,}$/;
         return regex.test(password);
-      }
+    }
 
     return (
         <div className="min-h-screen bg-slate-100 relative md:flex items-center justify-center">
@@ -73,8 +81,8 @@ export default function ResetMail() {
                     <div className="mb-6">
                         <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 ">Nouveau mot de passe</label>
                         <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" id="password" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required />
-                        <p className={`${isPasswordError ? 'text-red-500 text-sm block mt-2' : 'text-sm block mt-2'}`}>Le mot de passe doit contenir au moins 8 caractères, dont au moins un chiffre et un caractère spécial.</p>          
-                        </div>
+                        <p className={`${isPasswordError ? 'text-red-500 text-sm block mt-2' : 'text-sm block mt-2'}`}>Le mot de passe doit contenir au moins 8 caractères, dont au moins un chiffre et un caractère spécial.</p>
+                    </div>
                     <div className="flex justify-between items-center">
                         <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Enregistrer</button>
                         <Link href='/login' className="text-sm text-blue-600">Connection</Link>

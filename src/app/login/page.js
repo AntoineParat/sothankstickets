@@ -132,9 +132,9 @@ export default function Home() {
       }
 
       try {
-        // const userCredential = await signInWithEmailAndPassword(auth,formData.email, formData.password); //login
         const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password); //signUp
         const user = userCredential.user;
+
         // Récupération du prénom et du nom à partir de l'adresse email
         const { firstName, lastName } = extractNameFromEmail(formData.email);
 
@@ -186,6 +186,7 @@ export default function Home() {
         setIsLoading(false);
         router.push('/user')
       } catch (error) {
+        alert("Une erreur est survenue, merci de contacter antoine.parat@acadomia.fr")
         console.error(error.code, error.message); // auth/invalid-login-credential ou email inexistant
       }
       setIsLoading(false);
