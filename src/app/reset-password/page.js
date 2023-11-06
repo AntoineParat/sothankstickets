@@ -13,13 +13,13 @@ export default function ResetMail() {
     const router = useRouter();
     const searchParams = useSearchParams()
 
-    const oobCode = searchParams.get('oobCode');
     useEffect(() => {
+        const oobCode = searchParams.get('oobCode');
         if (!oobCode) {
             alert('Réinitialisation impossible')
             return router.replace('/login')
         }
-    }, []);
+    }, [router, searchParams]);
 
     const [isLoading, setIsLoading] = useState(false)
     const [showAlert, setShowAlert] = useState(false)
@@ -28,6 +28,7 @@ export default function ResetMail() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const oobCode = searchParams.get('oobCode');
         setIsLoading(true)
         if (!isValidPassword(password)) {
             setIsPasswordError(true)
@@ -40,6 +41,7 @@ export default function ResetMail() {
             setShowAlert(true)
         } catch (error) {
             setIsLoading(false)
+            console.log(error)
             alert('Une erreur est survenue, contactez antoine.parat@acadomia.fr')
             router.replace('/login')
         }
