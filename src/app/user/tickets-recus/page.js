@@ -35,7 +35,7 @@ export default function Ticketsrecus() {
             fetchTickets();
             fetchInProgress.current = true;
         }
-    }, []);
+    }, [userEmail]);
 
     //Mettre à 0 le compteur des tickets non-lu
     useEffect(() => {    
