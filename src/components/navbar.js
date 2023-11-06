@@ -46,7 +46,7 @@ export default function Navbar() {
 
         //Envoie d'email :
         // Créez une référence à votre fonction cloud
-        const sendEmail = httpsCallable(functions, 'sendEmail');
+        // const sendEmail = httpsCallable(functions, 'sendEmail');
 
         // Appelez la fonction avec les données nécessaires
         try {
