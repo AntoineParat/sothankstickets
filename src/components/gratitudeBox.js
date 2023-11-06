@@ -35,7 +35,7 @@ export default function GratitudeBox() {
     async function onInvit() {
         setIsLoading(true)
         // check if acadomia member
-        const isValidEmail = /^[a-zA-Z0-9._-]+@acadomia\.fr$/.test(searchTerm);
+        const isValidEmail = /^[a-zA-Z0-9._-]+@acadomia\.fr$/.test(gratitudeDestinataire,);
         if (!isValidEmail) {
             console.log("non valide")
             handleCloseModal()
@@ -177,9 +177,9 @@ export default function GratitudeBox() {
                     }
                     return response.json();
                 })
-                .then(data => {
-                    setSuggestions(data);
-                })
+                // .then(data => {
+                //     setSuggestions(data);
+                // })
                 .catch(error => {
                     console.error('Erreur lors de la récupération des suggestions:', error);
                     setSuggestions([]);
@@ -238,7 +238,6 @@ export default function GratitudeBox() {
                         {suggestions.map((suggestion, index) => (
                             <div key={index} onClick={() => {
                                 setgratitudeDestinataire(suggestion);
-                                setSuggestions([])
                             }} className="p-2 hover:bg-gray-200 cursor-pointer">
                                 {suggestion}
                             </div>
