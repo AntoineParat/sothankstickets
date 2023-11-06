@@ -166,6 +166,7 @@ export default function GratitudeBox() {
     // suggeion adresses email
     const [gratitudeDestinataire, setgratitudeDestinataire] = useState('');
     const [suggestions, setSuggestions] = useState([]);
+    const [showSuggestions, setShowSuggestions] = useState(true);
 
     useEffect(() => {
         // Lancer la recherche uniquement si searchTerm a au moins 3 caractères
@@ -231,13 +232,15 @@ export default function GratitudeBox() {
                 <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900  text-xl">Envoi de gratitude👇</label>
                 <input type="search" required value={gratitudeDestinataire} onChange={(e) => {
                     setgratitudeDestinataire(e.target.value);
+                    setShowSuggestions(true);
                 }}
                     aria-describedby="helper-text-explanation" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="collaborateur@acadomia.fr" />
-                {suggestions.length > 0 && (
+                {showSuggestions && suggestions.length > 0 && (
                     <div className="absolute mt-2 rounded border border-gray-300 bg-white z-10">
                         {suggestions.map((suggestion, index) => (
                             <div key={index} onClick={() => {
                                 setgratitudeDestinataire(suggestion);
+                                setShowSuggestions(false);
                             }} className="p-2 hover:bg-gray-200 cursor-pointer">
                                 {suggestion}
                             </div>
