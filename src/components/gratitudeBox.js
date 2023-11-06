@@ -52,12 +52,12 @@ export default function GratitudeBox() {
 
     async function addGratitudeTicket() {
         // check if acadomia member
-        const isValidEmail = /^[a-zA-Z0-9._-]+@acadomia\.fr$/.test(gratitudeDestinataire);
-        if (!isValidEmail) {
-            setErrorMessage('Adresse mail non valide')
-            setPopupType('error');
-            return setShowPopup(true);
-        }
+        // const isValidEmail = /^[a-zA-Z0-9._-]+@acadomia\.fr$/.test(gratitudeDestinataire);
+        // if (!isValidEmail) {
+        //     setErrorMessage('Adresse mail non valide')
+        //     setPopupType('error');
+        //     return setShowPopup(true);
+        // }
 
         if (suggestions.length === 0) {
             return onInvit()
@@ -238,6 +238,7 @@ export default function GratitudeBox() {
                         {suggestions.map((suggestion, index) => (
                             <div key={index} onClick={() => {
                                 setgratitudeDestinataire(suggestion);
+                                setSuggestions('')
                             }} className="p-2 hover:bg-gray-200 cursor-pointer">
                                 {suggestion}
                             </div>
