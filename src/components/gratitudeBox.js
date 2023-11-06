@@ -177,9 +177,9 @@ export default function GratitudeBox() {
                     }
                     return response.json();
                 })
-                // .then(data => {
-                //     setSuggestions(data);
-                // })
+                .then(data => {
+                    setSuggestions(data);
+                })
                 .catch(error => {
                     console.error('Erreur lors de la récupération des suggestions:', error);
                     setSuggestions([]);
