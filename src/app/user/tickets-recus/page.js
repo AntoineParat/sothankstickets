@@ -35,7 +35,7 @@ export default function Ticketsrecus() {
             fetchTickets();
             fetchInProgress.current = true;
         }
-    }, [userEmail]);
+    }, []);
 
     //Mettre à 0 le compteur des tickets non-lu
     useEffect(() => {    
@@ -64,7 +64,7 @@ export default function Ticketsrecus() {
         if (lastDoc) {
             q = query(
                 collection(db, "tickets"),
-                where("to", "==", userEmail),
+                where("to_email", "==", userEmail),
                 orderBy("date", "desc"),
                 startAfter(lastDoc),
                 limit(10)
@@ -72,7 +72,7 @@ export default function Ticketsrecus() {
         } else {
             q = query(
                 collection(db, "tickets"),
-                where("to", "==", userEmail),
+                where("to_email", "==", userEmail),
                 orderBy("date", "desc"),
                 limit(10)
             );
