@@ -35,7 +35,7 @@ export default function ResetMail() {
         }
         // Mise à jour password
         try {
-            // await confirmPasswordReset(auth, oobCode, password);
+            await confirmPasswordReset(auth, oobCode, password);
             setIsLoading(false)
             setShowAlert(true)
         } catch (error) {

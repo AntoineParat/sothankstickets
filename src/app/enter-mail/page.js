@@ -23,7 +23,7 @@ export default function ResetMail() {
           }
         // Envoi email de réinitialisation
         try {
-            // await sendPasswordResetEmail(auth, email)
+            await sendPasswordResetEmail(auth, email)
             setIsLoading(false)
             setShowAlert(true)
         } catch (error) {
