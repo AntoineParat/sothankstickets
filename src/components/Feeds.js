@@ -52,7 +52,7 @@ function TicketGratitude({ ticket }) {
         <div className="m-4 bg-white p-4 shadow-md rounded-lg">
             <div className="">
                 <div className="flex flex-col">
-                    <img onClick={() => {router.push('/user/profil?id='+ticket.from_uid) }}  className="w-20 h-20 p-1 rounded-full ring-4 ring-yellow-400 cursor-pointer" src={ticket.from_photoURL} alt=" image" />
+                    <img onClick={() => {router.push('/user/'+ticket.from_email) }}  className="w-20 h-20 p-1 rounded-full ring-4 ring-yellow-400 cursor-pointer" src={ticket.from_photoURL} alt=" image" />
                     <h5 className="mb-1 mt-1 text-lg font-medium text-gray-900 ">{ticket.from_email}</h5>
                 </div>
                 <p className='text-slate-500 mb-3'>🕙 le {formattedDate}</p>
@@ -69,7 +69,7 @@ function TicketGratitude({ ticket }) {
                     return (
                         <div key={index} className="mt-2 ml-2 p-3 border-t border-slate-200">
                             {/* Vous pouvez ajouter un JSX pour l'auteur du commentaire si nécessaire */}
-                            <img onClick={() => {router.push('/user/profil?id='+comment.comment_from_uid) }} className="w-20 h-20 p-1 rounded-full ring-4 ring-yellow-400 cursor-pointer" src={comment.comment_from_img} alt="image" />
+                            <img onClick={() => {router.push('/user/'+comment.comment_from_email) }} className="w-20 h-20 p-1 rounded-full ring-4 ring-yellow-400 cursor-pointer" src={comment.comment_from_img} alt="image" />
                             <h5 className="mb-1 mt-1 text-lg font-medium text-gray-900 ">{comment.comment_from_email}</h5>
                             <p className='text-slate-500 mb-3'>🕙 le {formattedCommentDate}</p>
                             {comment.text}

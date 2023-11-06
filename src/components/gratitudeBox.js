@@ -33,12 +33,13 @@ export default function GratitudeBox() {
     const [isLoading, setIsLoading] = useState(false)
 
     async function onInvit() {
+        console.log('on invit')
         setIsLoading(true)
         // check if acadomia member
         const isValidEmail = /^[a-zA-Z0-9._-]+@acadomia\.fr$/.test(gratitudeDestinataire,);
         if (!isValidEmail) {
             console.log("non valide")
-            handleCloseModal()
+            setIsLoading(false)
             return alert("Adresse email non valide")
         }
         //send invitation to email adress
@@ -59,6 +60,7 @@ export default function GratitudeBox() {
         //     return setShowPopup(true);
         // }
 
+        console.log("addGratitude")
         if (suggestions.length === 0) {
             return onInvit()
         }
@@ -250,6 +252,7 @@ export default function GratitudeBox() {
                 {/* tickets counter input*/}
                 <div className="flex mt-2">
                     <button
+                        type="button"
                         className="bg-gray-200 p-2 rounded-l-md hover:bg-gray-300"
                         onClick={handleDecrement}
                     >
@@ -264,6 +267,7 @@ export default function GratitudeBox() {
                         required
                     />
                     <button
+                        type="button"
                         className="bg-gray-200 p-2 rounded-r-md hover:bg-gray-300"
                         onClick={handleIncrement}
                     >

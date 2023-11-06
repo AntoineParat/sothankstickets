@@ -90,6 +90,8 @@ export default function Navbar() {
 
     }, []);
 
+    const [showSuggestions, setShowSuggestions] = useState(true);
+
     //searchbar
     useEffect(() => {
         // Lancer la recherche uniquement si searchTerm a au moins 3 caractères
@@ -140,7 +142,10 @@ export default function Navbar() {
                         </svg>
                     </div>
                     <input type="search" value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
+                        onChange={(e) => {
+                            setSearchTerm(e.target.value);
+                            setShowSuggestions(true);
+                        }}
                         className="block w-full p-3 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-slate-50 focus:ring-blue-500 focus:border-blue-500" placeholder="recherche par adresse mail" required
                     />
                     <div className="absolute inset-y-0 right-0 flex items-center pr-3">
@@ -154,12 +159,13 @@ export default function Navbar() {
                         {/* Modal ajout destinataire non enregistré */}
                         <UserModal email={searchTerm} isOpen={isModalOpen} onClose={handleCloseModal} onInvite={handleInvite} />
                     </div>
-                    {searchTerm && suggestions.length > 0 && (
+                    {showSuggestions && suggestions.length > 0 && (
                         <div className="absolute mt-2 w-full rounded border border-gray-300 bg-white z-10">
                             {suggestions.map((suggestion, index) => (
                                 <div key={index} onClick={() => {
                                     setSearchTerm(suggestion);
-                                    router.push("/user/" + suggestion)
+                                    setShowSuggestions(false);
+                                    router.push("/user/" + suggestion);
                                 }}
                                     className="p-2 hover:bg-gray-200 cursor-pointer">
                                     {suggestion}

@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { db, auth } from '../../firebase'  // Assurez-vous que le chemin est correct
 import { collection, addDoc, updateDoc, serverTimestamp, doc, getDoc, increment } from 'firebase/firestore';
 
-export default function GratitudeToSpecificUser({userData, userId}) {
+export default function GratitudeToSpecificUser({ userData, userId }) {
     // tickets counter logic
     const [count, setCount] = useState(0);
     function handleIncrement() {
@@ -81,10 +81,10 @@ export default function GratitudeToSpecificUser({userData, userId}) {
                 from_name: user.displayName, //user.name
                 from_uid: user.uid,
                 from_photoURL: user.photoURL,
-                to_uid : userId,
-                to_email : userData.email,
+                to_uid: userId,
+                to_email: userData.email,
                 to_name: userData.name,
-                to_photoURL : userData.photoURL,
+                to_photoURL: userData.photoURL,
                 gratitude_number: count,
                 message: gratitudeMessage,
                 date: serverTimestamp()  // Ceci ajoutera automatiquement la date et l'heure actuelles en utilisant le timestamp du serveur.
@@ -151,6 +151,7 @@ export default function GratitudeToSpecificUser({userData, userId}) {
             {/* tickets counter input*/}
             <div className="flex mt-2">
                 <button
+                    type="button"
                     className="bg-gray-200 p-2 rounded-l-md hover:bg-gray-300"
                     onClick={handleDecrement}
                 >
@@ -158,12 +159,14 @@ export default function GratitudeToSpecificUser({userData, userId}) {
                 </button>
                 <input
                     // type="number"
+                    required
                     placeholder="nombre tickets"
                     className="bg-white rounded border p-2 w-36 text-center"
                     onChange={e => setNumberOfTickets(e.target.value)}
                     value={count === 0 ? "" : count}
                 />
                 <button
+                    type="button"
                     className="bg-gray-200 p-2 rounded-r-md hover:bg-gray-300"
                     onClick={handleIncrement}
                 >

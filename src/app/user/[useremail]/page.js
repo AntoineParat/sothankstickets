@@ -105,23 +105,76 @@ export default function TicketsPage({ params }) {
 
   const [userData, setUserData] = useState(null);
   const [error, setError] = useState(null);
+  const [userId, setUserId] = useState('')
 
-  const searchParams = useSearchParams()
+  // const searchParams = useSearchParams()
 
-  const userId = searchParams.get('is')
+  // const userId = searchParams.get('is')
 
+  // récupère les données utilisateurs depuis l'id
+  // useEffect(() => {
+  //   if (!userId) return;
+
+  //   let unsubscribeFromGratitudeData = () => { };
+
+  //   const fetchUserData = async () => {
+  //     try {
+  //       const userRef = doc(db, 'utilisateurs', userId);
+  //       const userSnap = await getDoc(userRef);
+
+  //       if (userSnap.exists()) {
+  //         const baseUserData = userSnap.data();
+  //         setUserData(baseUserData);
+
+  //         // Calculer le mois en cours pour la sous-collection
+  //         const currentDate = new Date();
+  //         const currentMonth = `${currentDate.getMonth() + 1}-${currentDate.getFullYear()}`;
+
+  //         // Souscription aux données de gratitude
+  //         const gratitudeDataRef = doc(db, 'utilisateurs', userId, currentMonth, 'gratitudeData');
+  //         unsubscribeFromGratitudeData = onSnapshot(gratitudeDataRef, (doc) => {
+  //           if (doc.exists()) {
+  //             const gratitudeData = doc.data();
+  //             setUserData(prevData => ({ ...prevData, ...gratitudeData }));
+  //           }
+  //         });
+  //       } else {
+  //         setError('Les informations de l’utilisateur n’existent pas.');
+  //       }
+  //     } catch (err) {
+  //       console.error("Erreur lors de la récupération des données de l'utilisateur:", err);
+  //       setError('Une erreur est survenue lors de la récupération des données.');
+  //     }
+  //   };
+
+  //   fetchUserData();
+
+  //   return () => {
+  //     // Nettoyer l'écouteur lors du démontage du composant
+  //     unsubscribeFromGratitudeData();
+  //   };
+  // }, []);
+
+  // récupère les données utulisateurs depuis l'email
   useEffect(() => {
-    if (!userId) return;
+    if (!userEmail) return;
 
     let unsubscribeFromGratitudeData = () => { };
 
-    const fetchUserData = async () => {
+    const fetchUserDataByEmail = async () => {
       try {
-        const userRef = doc(db, 'utilisateurs', userId);
-        const userSnap = await getDoc(userRef);
+        // Utilisez une requête pour trouver l'utilisateur par e-mail
+        const usersRef = collection(db, 'utilisateurs');
+        const q = query(usersRef, where("email", "==", userEmail));
 
-        if (userSnap.exists()) {
-          const baseUserData = userSnap.data();
+        const querySnapshot = await getDocs(q);
+
+        // Supposons que l'email est unique et prenons le premier document
+        if (!querySnapshot.empty) {
+          const userDoc = querySnapshot.docs[0];
+          const loadedUserId = userDoc.id;
+          setUserId(userDoc.id)
+          const baseUserData = userDoc.data();
           setUserData(baseUserData);
 
           // Calculer le mois en cours pour la sous-collection
@@ -129,7 +182,7 @@ export default function TicketsPage({ params }) {
           const currentMonth = `${currentDate.getMonth() + 1}-${currentDate.getFullYear()}`;
 
           // Souscription aux données de gratitude
-          const gratitudeDataRef = doc(db, 'utilisateurs', userId, currentMonth, 'gratitudeData');
+          const gratitudeDataRef = doc(db, 'utilisateurs', loadedUserId , currentMonth, 'gratitudeData');
           unsubscribeFromGratitudeData = onSnapshot(gratitudeDataRef, (doc) => {
             if (doc.exists()) {
               const gratitudeData = doc.data();
@@ -137,59 +190,23 @@ export default function TicketsPage({ params }) {
             }
           });
         } else {
-          setError('Les informations de l’utilisateur n’existent pas.');
+          setError('Aucun utilisateur correspondant à cet e-mail.');
         }
       } catch (err) {
-        console.error("Erreur lors de la récupération des données de l'utilisateur:", err);
+        console.error("Erreur lors de la récupération des données de l'utilisateur par e-mail:", err);
         setError('Une erreur est survenue lors de la récupération des données.');
       }
     };
 
-    fetchUserData();
+    fetchUserDataByEmail();
 
     return () => {
       // Nettoyer l'écouteur lors du démontage du composant
       unsubscribeFromGratitudeData();
     };
-  }, []);
+  }, [userEmail]); // Assurez-vous d'ajouter userEmail comme dépendance de l'effet
 
-  // const fetchUserData = async () => {
-  //   if (!userId) return;
-  //   console.log("ok")
 
-  //   try {
-  //     const userRef = doc(db, 'utilisateurs', userId);
-  //     const userSnap = await getDoc(userRef);
-
-  //     if (userSnap.exists()) {
-  //       const baseUserData = userSnap.data();
-  //       setUserData(baseUserData);
-
-  //       // Calculer le mois en cours pour la sous-collection
-  //       const currentDate = new Date();
-  //       const currentMonth = `${currentDate.getMonth() + 1}-${currentDate.getFullYear()}`;
-
-  //       // Récupérer les données de gratitude pour l'utilisateur
-  //       const gratitudeDataRef = doc(db, 'utilisateurs', userId, currentMonth, 'gratitudeData');
-  //       const gratitudeDataSnap = await getDoc(gratitudeDataRef);
-
-  //       if (gratitudeDataSnap.exists()) {
-  //         const gratitudeData = gratitudeDataSnap.data();
-  //         setUserData(prevData => ({ ...prevData, ...gratitudeData }));
-  //       } else {
-  //         setError('Les données de gratitude pour cet utilisateur ne sont pas disponibles pour le mois en cours.');
-  //       }
-  //     }
-  //   } catch (err) {
-  //     console.error("Erreur lors de la récupération des données de l'utilisateur:", err);
-  //     setError('Une erreur est survenue lors de la récupération des données.');
-  //   }
-  // };
-
-  // // fetch user data 
-  // useEffect(() => {
-  //   fetchUserData();
-  // }, []);
 
 
   // <---------------  GRATITUDE BOX LOGIC --------------->
@@ -294,7 +311,7 @@ export default function TicketsPage({ params }) {
           <div className="md:w-3/4 md:ml-4 flex-col">
 
             {/* send gratitude box*/}
-            {userData && <GratitudeToSpecificUser userData={userData} userId={userId}/>}
+            {userData && <GratitudeToSpecificUser userData={userData} userId={userId} />}
 
             {/*feeds news*/}
             <div className="border-t p-2 border-b pb-4 mt-4">
