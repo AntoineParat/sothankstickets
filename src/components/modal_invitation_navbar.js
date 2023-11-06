@@ -13,7 +13,7 @@ function UserModal ({ email, isOpen, onClose, onInvite }) {
         const [prenom] = localPart.split('.');
 
         setName(prenom)
-    }, [])
+    }, [email])
 
     if (!isOpen) return null;
 
