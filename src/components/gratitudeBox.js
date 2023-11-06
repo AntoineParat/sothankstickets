@@ -238,7 +238,7 @@ export default function GratitudeBox() {
                         {suggestions.map((suggestion, index) => (
                             <div key={index} onClick={() => {
                                 setgratitudeDestinataire(suggestion);
-                                setSuggestions('')
+                                setSuggestions([])
                             }} className="p-2 hover:bg-gray-200 cursor-pointer">
                                 {suggestion}
                             </div>
