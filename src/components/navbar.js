@@ -31,7 +31,7 @@ export default function Navbar() {
     };
 
     //inviter user
-    const handleInvite = () => {
+    const handleInvite = async () => {
         // check if acadomia member
         const isValidEmail = /^[a-zA-Z0-9._-]+@acadomia\.fr$/.test(searchTerm);
         if (!isValidEmail) {
@@ -115,8 +115,7 @@ export default function Navbar() {
 
     function handleUserSearch() {
         if (suggestions.length === 0) { // utilisiteur inconnu 
-            //show invitation modal
-            return setModalOpen(true)
+            return setModalOpen(true) //show invitation modal
         }
         router.push("/user/" + searchTerm)
     }

@@ -18,9 +18,10 @@ export default function ResetMail() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true)
-        if (!isValidEmail(email)) {
-            return alert("email non valide");
-          }
+        // if (!isValidEmail(email)) {
+        //     alert("email non valide");
+        //     return router.replace('/login')
+        // }
         // Envoi email de réinitialisation
         try {
             await sendPasswordResetEmail(auth, email)
@@ -37,7 +38,7 @@ export default function ResetMail() {
         const regex = /^[a-zA-Z0-9._-]+@acadomia\.fr$/;
         // const regex = /^[\w.-]+@gmail\.com$/;
         return regex.test(email);
-      }
+    }
 
     return (
         <div className="min-h-screen bg-slate-100 relative md:flex items-center justify-center">
