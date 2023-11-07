@@ -36,7 +36,7 @@ export default function GratitudeBox() {
     const [showInvitModal, setShowInvitModal] = useState(false)
 
     async function handleInvite() {
-        console.log('on invit')
+        setShowInvitModal
         setIsLoading(true)
         //send invitation to email adress
         setTimeout(() => {
@@ -49,7 +49,7 @@ export default function GratitudeBox() {
 
      //close Invit Modal 
      const handleCloseModal = () => {
-        setModalOpen(false);
+        setShowInvitModal(false);
     };
 
     async function addGratitudeTicket() {
