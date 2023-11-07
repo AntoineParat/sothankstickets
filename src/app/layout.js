@@ -47,7 +47,7 @@
 import './globals.css'
 import { Inter } from 'next/font/google'
 import { useRouter, usePathname } from 'next/navigation';
-import { useEffect } from 'react'; 
+import { useEffect } from 'react';
 
 import { AuthProvider, useAuth } from '../authContext';
 
