@@ -49,7 +49,7 @@ export default function GratitudeBox() {
         const from_name = user.displayName;
         const to_email = gratitudeDestinataire;
         await sendEmail({ 'to_email': to_email, 'from_name': from_name });
-        alert("🎊 Mail d'invitation envoyé à to_email !");
+        alert(`🎊 Mail d'invitation envoyé à ${to_email} !`);
         setCount(0)
         setgratitudeDestinataire('')
         setGratitudeMessage('')

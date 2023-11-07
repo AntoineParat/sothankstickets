@@ -168,7 +168,7 @@ function UserPage() {
 
             {/* gratitude heroes*/}
             <div className="border-t p-2 border-b pb-4 mt-4">
-              <p className="font-bold text-lg">Gratitude Heroes</p>
+              <p className="font-bold text-lg">Gratitude Heroes 🏆</p>
             </div>
 
             {/*TOP 3*/}

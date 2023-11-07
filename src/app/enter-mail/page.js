@@ -18,10 +18,10 @@ export default function ResetMail() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true)
-        // if (!isValidEmail(email)) {
-        //     alert("email non valide");
-        //     return router.replace('/login')
-        // }
+        if (!isValidEmail(email)) {
+            alert("email non valide");
+            return router.replace('/login')
+        }
         // Envoi email de réinitialisation
         try {
             await sendPasswordResetEmail(auth, email)
