@@ -9,9 +9,9 @@ import { httpsCallable } from 'firebase/functions';
 
 import UserModal from '../components/modal_invitation_navbar';
 
-const user = auth.currentUser;
-
 export default function GratitudeBox() {
+    const user = auth.currentUser;
+
     // tickets counter logic
     const [count, setCount] = useState(0);
     function handleIncrement() {
