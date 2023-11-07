@@ -2,11 +2,14 @@
 
 import { useState, useEffect } from "react";
 
-import { db } from '../firebase'  // Assurez-vous que le chemin est correct
+import { db, auth, functions } from '../firebase'
 import { collection, addDoc, updateDoc, serverTimestamp, query, where, doc, getDoc, getDocs, increment } from 'firebase/firestore';
-import { auth } from '../firebase';  // Votre configuration firebase
+import { httpsCallable } from 'firebase/functions';
+
 
 import UserModal from '../components/modal_invitation_navbar';
+
+const user = auth.currentUser;
 
 export default function GratitudeBox() {
     // tickets counter logic
@@ -36,19 +39,25 @@ export default function GratitudeBox() {
     const [showInvitModal, setShowInvitModal] = useState(false)
 
     async function handleInvite() {
-        setShowInvitModal
+        setShowInvitModal(false);
         setIsLoading(true)
-        //send invitation to email adress
-        setTimeout(() => {
-            setIsLoading(false);
-            //logique envoi email
-            alert("email envoyé");
-            setgratitudeDestinataire('')
-        }, 2000);
+
+        // Créer une référence à la fonction cloud
+        const sendEmail = httpsCallable(functions, 'sendEmail');
+
+        // Appeler la fonction avec les données nécessaires
+        const from_name = user.displayName;
+        const to_email = gratitudeDestinataire;
+        await sendEmail({ 'to_email': to_email, 'from_name': from_name });
+        alert("🎊 Mail d'invitation envoyé à to_email !");
+        setCount(0)
+        setgratitudeDestinataire('')
+        setGratitudeMessage('')
+        setIsLoading(false);
     }
 
-     //close Invit Modal 
-     const handleCloseModal = () => {
+    //close Invit Modal 
+    const handleCloseModal = () => {
         setShowInvitModal(false);
     };
 
@@ -68,7 +77,6 @@ export default function GratitudeBox() {
 
         setIsLoading(true);
 
-        const user = auth.currentUser;
         if (!user) {
             console.error("Aucun utilisateur connecté");
             setIsLoading(false);
