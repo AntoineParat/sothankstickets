@@ -6,6 +6,8 @@ import { db } from '../firebase'  // Assurez-vous que le chemin est correct
 import { collection, addDoc, updateDoc, serverTimestamp, query, where, doc, getDoc, getDocs, increment } from 'firebase/firestore';
 import { auth } from '../firebase';  // Votre configuration firebase
 
+import UserModal from '../components/modal_invitation_navbar';
+
 export default function GratitudeBox() {
     // tickets counter logic
     const [count, setCount] = useState(0);
@@ -31,17 +33,11 @@ export default function GratitudeBox() {
     const [popupType, setPopupType] = useState('success');  // Ajout de cet état
     const [errorMessage, setErrorMessage] = useState('')
     const [isLoading, setIsLoading] = useState(false)
+    const [showInvitModal, setShowInvitModal] = useState(false)
 
-    async function onInvit() {
+    async function handleInvite() {
         console.log('on invit')
         setIsLoading(true)
-        // check if acadomia member
-        const isValidEmail = /^[a-zA-Z0-9._-]+@acadomia\.fr$/.test(gratitudeDestinataire,);
-        if (!isValidEmail) {
-            console.log("non valide")
-            setIsLoading(false)
-            return alert("Adresse email non valide")
-        }
         //send invitation to email adress
         setTimeout(() => {
             setIsLoading(false);
@@ -51,18 +47,23 @@ export default function GratitudeBox() {
         }, 2000);
     }
 
+     //close Invit Modal 
+     const handleCloseModal = () => {
+        setModalOpen(false);
+    };
+
     async function addGratitudeTicket() {
         // check if acadomia member
-        // const isValidEmail = /^[a-zA-Z0-9._-]+@acadomia\.fr$/.test(gratitudeDestinataire);
-        // if (!isValidEmail) {
-        //     setErrorMessage('Adresse mail non valide')
-        //     setPopupType('error');
-        //     return setShowPopup(true);
-        // }
+        const isValidEmail = /^[a-zA-Z0-9._-]+@acadomia\.fr$/.test(gratitudeDestinataire);
+        if (!isValidEmail) {
+            setErrorMessage('Adresse mail non valide')
+            setPopupType('error');
+            return setShowPopup(true);
+        }
 
         console.log("addGratitude")
         if (suggestions.length === 0) {
-            return onInvit()
+            return setShowInvitModal(true)
         }
 
         setIsLoading(true);
@@ -287,6 +288,8 @@ export default function GratitudeBox() {
                     <button type="submit" className="bg-blue-500 text-white rounded px-4 py-2 mt-2">
                         Envoyer 💌
                     </button>
+                    {/* Modal ajout destinataire non enregistré */}
+                    <UserModal email={gratitudeDestinataire} isOpen={showInvitModal} onClose={handleCloseModal} onInvite={handleInvite} />
                 </div>
             </form>
             {/* Feed/Posts */}
