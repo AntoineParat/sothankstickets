@@ -44,7 +44,7 @@ function UserModal ({ email, isOpen, onClose, onInvite }) {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
-                    <p className="text-xl font-bold mb-6">{name} n'est pas inscrit</p>
+                    <p className="text-xl font-bold mb-6">{name} n'est pas inscrit-e</p>
                     <div className="relative mb-6">
                         {/* Gros bouton qui bouge un peu */}
                         <button
