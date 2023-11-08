@@ -104,9 +104,9 @@ export default function Home() {
   const handleSignUp = (e) => {
     e.preventDefault(); // Empêche le rechargement de la page
 
-    // if (!isValidEmail(email)) {
-    //   return setShowAlert(true);
-    // }
+    if (!isValidEmail(email)) {
+      return setShowAlert(true);
+    }
 
     if (!isValidPassword(password)) {
       setIsPasswordError(true)
