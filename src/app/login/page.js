@@ -25,40 +25,41 @@ export default function Home() {
 
   // Envoi email de vérification adresse
 
-  const sendVerificationRequest = async (user) => {
-    // Obtenez le token d'authentification de l'utilisateur
-    const token = await user.getIdToken();
-
-    try {
-      const response = await fetch('https://europe-west3-sothankstickets.cloudfunctions.net/generateVerificationToken', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}` // Ajoutez le token ici
-        },
-        body: JSON.stringify({
-          user_id: user.uid,
-          user_email: user.email
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      console.log(response.text())
-      setEmail(''); 
-      setPassword('')
-
-      alert(`Un email de vérification valable 10 minutes a été envoyé à l'adresse ${user.email}`);
-
-      // You might want to do something with the verification link here,
-      // such as showing it to the user or redirecting them to it.
-    } catch (error) {
-      alert("Erreur vérification email. Contactez antoine.parat@acadomia.fr")
-      console.error('Failed to send verification request:', error);
-    }
-  };
+  /* const sendVerificationRequest = async (user) => {
+     
+     // Obtenir le token d'authentification de l'utilisateur
+     const token = await user.getIdToken();
+ 
+     try {
+       const response = await fetch('https://europe-west3-sothankstickets.cloudfunctions.net/generateVerificationToken', {
+         method: 'POST',
+         headers: {
+           'Content-Type': 'application/json',
+           'Authorization': `Bearer ${token}` // Ajoutez le token ici
+         },
+         body: JSON.stringify({
+           user_id: user.uid,
+           user_email: user.email
+         }),
+       });
+ 
+       if (!response.ok) {
+         throw new Error(`HTTP error! status: ${response.status}`);
+       }
+ 
+       console.log(response.text())
+       setEmail(''); 
+       setPassword('')
+ 
+       alert(`Un email de vérification valable 10 minutes a été envoyé à l'adresse ${user.email}`);
+ 
+       // You might want to do something with the verification link here,
+       // such as showing it to the user or redirecting them to it.
+     } catch (error) {
+       alert("Erreur vérification email. Contactez antoine.parat@acadomia.fr")
+       console.error('Failed to send verification request:', error);
+     }
+   }; */
 
   // <----------- SIGN IN -------------->
 
@@ -79,12 +80,12 @@ export default function Home() {
       setIsLoading(true)
       try {
         const userCredential = await signInWithEmailAndPassword(auth, formData.email, formData.password); //signUp
-        const user = userCredential.user;
+        /*const user = userCredential.user;
         // vérification que l'adresse email a bien été vérifiée
         if (!user.emailVerified) {
           await sendVerificationRequest(user)
           return setIsLoading(false);
-        }
+        }*/
         setIsLoading(false);
         router.push('/user')
       } catch (error) {
@@ -181,7 +182,7 @@ export default function Home() {
           console.log('problème enregistrement email worker');
         }
 
-        await sendVerificationRequest(user)
+        // await sendVerificationRequest(user)
 
         setIsLoading(false);
         router.push('/user')
@@ -277,7 +278,7 @@ export default function Home() {
             </div>
             <div className="flex justify-between items-center">
               <button className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Se connecter</button>
-              <button type="submit" onClick={() => {showSignUpForm(true); setEmail(''); setPassword('')}} className="text-sm text-blue-600 hover:underline">Inscription</button>
+              <button type="submit" onClick={() => { showSignUpForm(true); setEmail(''); setPassword('') }} className="text-sm text-blue-600 hover:underline">Inscription</button>
             </div>
           </form>
         ) : (
@@ -286,26 +287,27 @@ export default function Home() {
             {/* ... Votre formulaire d'inscription ici ... */}
             <div className="mb-6">
               <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900">Adresse email</label>
-              <input value={email}  onChange={(e) => setEmail(e.target.value)} type="email" id="email" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="collaborateur@acadomia.fr" required />
+              <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" id="email" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="collaborateur@acadomia.fr" required />
             </div>
             <div className="mb-6">
               <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900">Mot de passe</label>
-              <input value={password}  onChange={(e) => setPassword(e.target.value)} type="password" id="password" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required />
+              <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" id="password" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required />
               <p className={`${isPasswordError ? 'text-red-500 text-sm block mt-2' : 'text-sm block mt-2'}`}>Le mot de passe doit contenir au moins 8 caractères, dont au moins un chiffre et un caractère spécial.</p>
             </div>
             <div className="mb-6">
               <label htmlFor="zone" className="block mb-2 text-sm font-medium text-gray-900">Zone</label>
               <select onChange={(e) => setZone(e.target.value)} id="zone" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
                 <option value="sud_ouest">Sud Ouest</option>
+                <option value="siege">Rue de la Baume</option>
                 <option value="nord">Nord</option>
                 <option value="est">Est</option>
-                <option value="sud_est">Sud Est</option>
-                <option value="siege">Siège</option>
+                <option value="sud_est">Sud-Est</option>
+                <option value="siege">A Live</option>
               </select>
             </div>
             <div className="flex justify-between items-center">
               <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">S'inscrire</button>
-              <button type="button" onClick={() => {showSignUpForm(false); setEmail(''); setPassword('')}} className="text-sm text-blue-600 hover:underline">Connection</button>
+              <button type="button" onClick={() => { showSignUpForm(false); setEmail(''); setPassword('') }} className="text-sm text-blue-600 hover:underline">Connection</button>
             </div>
           </form>
         )}
