@@ -4,9 +4,10 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link'
 
-import { auth, db } from '../../firebase';
+import { auth, db, functions  } from '../../firebase';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { doc, setDoc } from 'firebase/firestore';
+import { httpsCallable } from 'firebase/functions';
 
 
 export default function Home() {
@@ -183,6 +184,11 @@ export default function Home() {
         }
 
         // await sendVerificationRequest(user)
+
+        // Créer une référence à la fonction cloud
+        const sendWelcomeEmail = httpsCallable(functions, 'sendWelcomeEmail');
+        const result = await sendWelcomeEmail({'user_email' : email}); 
+        console.log(result.data);
 
         setIsLoading(false);
         router.push('/user')
