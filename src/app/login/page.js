@@ -304,11 +304,11 @@ export default function Home() {
               <label htmlFor="zone" className="block mb-2 text-sm font-medium text-gray-900">Zone</label>
               <select onChange={(e) => setZone(e.target.value)} id="zone" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
                 <option value="sud_ouest">Sud Ouest</option>
-                <option value="siege">Rue de la Baume</option>
+                <option value="Rue de la Baume">Rue de la Baume</option>
                 <option value="nord">Nord</option>
                 <option value="est">Est</option>
                 <option value="sud_est">Sud-Est</option>
-                <option value="siege">A Live</option>
+                <option value="A Live">A Live</option>
               </select>
             </div>
             <div className="flex justify-between items-center">
