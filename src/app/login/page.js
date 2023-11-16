@@ -186,9 +186,9 @@ export default function Home() {
         // await sendVerificationRequest(user)
 
         // Créer une référence à la fonction cloud
-        const sendWelcomeEmail = httpsCallable(functions, 'sendWelcomeEmail');
-        const result = await sendWelcomeEmail({'user_email' : email}); 
-        console.log(result.data);
+        // const sendWelcomeEmail = httpsCallable(functions, 'sendWelcomeEmail');
+        // const result = await sendWelcomeEmail({'user_email' : email}); 
+        // console.log(result.data);
 
         setIsLoading(false);
         router.push('/user')
