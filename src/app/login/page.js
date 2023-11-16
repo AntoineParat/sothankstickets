@@ -269,7 +269,7 @@ export default function Home() {
       </div>
       <img src="acad.png" alt="Logo 2" className="absolute top-4 right-4 h-12 w-auto" /> {/* ajustez h-12 selon la taille souhaitée */}
       {/* login form */}
-      <div className="flex-grow flex items-center justify-center">
+      <div className="flex-grow flex items-center justify-center z-10">
         {!showSignUp ? (
           <form onSubmit={handleSignIn} className="w-full md:w-4/12 bg-white p-4 shadow-md rounded-lg">
             <div className="mb-6">
