@@ -305,6 +305,7 @@ export default function Home() {
               <select onChange={(e) => setZone(e.target.value)} id="zone" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
                 <option value="sud_ouest">Sud Ouest</option>
                 <option value="Rue de la Baume">Rue de la Baume</option>
+                <option value="IDF">Île-de-France</option>
                 <option value="nord">Nord</option>
                 <option value="est">Est</option>
                 <option value="sud_est">Sud-Est</option>
