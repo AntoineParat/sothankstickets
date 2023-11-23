@@ -61,7 +61,7 @@ function LayoutContent({ children }) {
   useEffect(() => {
     if (!loading) {
       if (!currentUser) {
-        if (!['/reset-password', '/verification', '/enter-mail'].includes(pathname)) {
+        if (!['/reset-password', '/verification', '/enter-mail', '/test'].includes(pathname)) {
           router.push('/login');
         }
       }
