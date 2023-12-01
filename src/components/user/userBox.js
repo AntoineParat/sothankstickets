@@ -268,8 +268,8 @@ function UserBox() {
             <p className="text-sm text-gray-500">Zone {zone}</p>
 
             <p className="mt-4 text-gray-800">{gratitudes}  gratitudes reçues</p>
-            <p className="mt-2 text-gray-800">{ticketZone} ticket zone restants</p>
-            <p className="mt-2 text-gray-800">{ticketHorsZone} ticket hors zone restants</p>
+            <p className="mt-2 text-gray-800">{ticketZone} tickets zone restants</p>
+            <p className="mt-2 text-gray-800">{ticketHorsZone} tickets hors zone restants</p>
 
             <button
                 onClick={handleLogout}
