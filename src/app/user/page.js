@@ -175,7 +175,7 @@ function UserPage() {
             <div className="w-full md:flex">
               {top3.length === 0 ? (
                 <div className="text-center mt-10">
-                  <p className="text-lg text-gray-800">Les compteurs sont à 0</p>
+                  <p className="text-lg text-gray-800">1er du mois : les compteurs sont remis à 0 😊</p>
                 </div>
               ) : (
                 top3.map((user, index) => (
