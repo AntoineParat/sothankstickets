@@ -178,7 +178,7 @@ export default function Ticketsrecus() {
                             {/*feeds news*/}
                             <div>
                                 {/* historic gratitude */}
-                                <div className='bg-white p-4 shadow-md rounded-lg'>
+                                <div className='bg-white p-4 shadow-md rounded-lg text-lg flex items-center justify-center'>
                                 🏅 Total gratitudes reçues : {totalGratitudes} 🏅
                                 </div>
 
