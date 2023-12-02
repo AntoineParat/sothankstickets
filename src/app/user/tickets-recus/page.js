@@ -177,6 +177,11 @@ export default function Ticketsrecus() {
                         <div className="md:w-3/4 md:ml-4 flex-col">
                             {/*feeds news*/}
                             <div>
+                                {/* historic gratitude */}
+                                <div className='bg-white p-4 shadow-md rounded-lg'>
+                                🏅 Total gratitudes reçues : {totalGratitudes} 🏅
+                                </div>
+
                                 {tickets.map(ticket => (
                                     <TicketGratitude key={ticket.id} ticket={ticket} />
                                 ))}
