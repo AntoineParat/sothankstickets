@@ -110,9 +110,6 @@ function UserPage() {
     const options = { year: 'numeric', month: 'long' };
     let formattedDate = date.toLocaleDateString('fr-FR', options);
 
-    // Mettre la première lettre en majuscule
-    formattedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
-
     return formattedDate
   }
 

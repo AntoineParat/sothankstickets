@@ -11,6 +11,7 @@ import { db, auth } from '../../../firebase';  // Assurez-vous que le chemin est
 import {
     collection,
     doc,
+    getDoc,
     getDocs,
     updateDoc,
     query,
@@ -23,6 +24,7 @@ import {
 export default function Ticketsrecus() {
 
     const [tickets, setTickets] = useState([]);
+    const [totalGratitudes, settotalGratitudes] = useState(0)
 
     const user = auth.currentUser
     // const userEmail = user.email
@@ -38,27 +40,40 @@ export default function Ticketsrecus() {
     }, []);
 
     //Mettre à 0 le compteur des tickets non-lu
-    useEffect(() => {    
+    useEffect(() => {
         if (user) {
-          // Récupère la référence du document de l'utilisateur
-          const userDocRef = doc(db, 'utilisateurs', user.uid);
-    
-          // Mettre à jour le compteur des tickets non lus à 0
-          updateDoc(userDocRef, {
-            tickets_non_lus: 0
-          }).then(() => {
-            console.log("Compteur des tickets non lus mis à jour.");
-          }).catch(error => {
-            console.error("Erreur lors de la mise à jour du compteur des tickets non lus: ", error);
-          });
+            // Récupère la référence du document de l'utilisateur
+            const userDocRef = doc(db, 'utilisateurs', user.uid);
+
+            // Récupère le total_gratitude utilisateur
+            const fetchTotalGratitude = async () => {
+                const userDocSnapshot = await getDoc(userDocRef);
+
+                if (userDocSnapshot.exists()) {
+                    // Récupérer la valeur du champ 'total_gratitude'
+                    const total = userDocSnapshot.data().total_gratitude;
+                    settotalGratitudes(total)
+                } else {
+                    console.log("Aucun document trouvé pour cet utilisateur.");
+                }
+            }
+            fetchTotalGratitude()
+            // Mettre à jour le compteur des tickets non lus à 0
+            updateDoc(userDocRef, {
+                tickets_non_lus: 0
+            }).then(() => {
+                console.log("Compteur des tickets non lus mis à jour.");
+            }).catch(error => {
+                console.error("Erreur lors de la mise à jour du compteur des tickets non lus: ", error);
+            });
         }
-      }, []);
+    }, []);
 
     const [lastDoc, setLastDoc] = useState(null);
     const [allTicketsLoaded, setAllTicketsLoaded] = useState(false);
 
     async function fetchTickets() {
-        console.log("fetchTickets called", { lastDoc, userEmail });
+        // console.log("fetchTickets called", { lastDoc, userEmail });
 
         let q;
         if (lastDoc) {
@@ -83,7 +98,7 @@ export default function Ticketsrecus() {
             ...doc.data()
         }));
 
-        console.log("ticketsData fetched", ticketsData);
+        // console.log("ticketsData fetched", ticketsData);
         // Reset fetchInProgress when the fetch completes
 
         setTickets(prevTickets => [...prevTickets, ...ticketsData]);

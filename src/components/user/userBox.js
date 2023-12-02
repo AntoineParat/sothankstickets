@@ -199,9 +199,6 @@ function UserBox() {
         const date = new Date();
         const options = { year: 'numeric', month: 'long' };
         let formattedDate = date.toLocaleDateString('fr-FR', options);
-        
-        // Mettre la première lettre en majuscule
-        formattedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
 
         return formattedDate
     }
@@ -278,7 +275,7 @@ function UserBox() {
             )} */}
             <p className="text-sm text-gray-500">Zone {zone}</p>
 
-            <p className="mt-4 text-gray-800">{CurrentMonthAndYear()}:</p>
+            <p className="mt-4 text-gray-800 underline decoration-4" style={{ textDecorationColor: '#fbbf24' }}>{CurrentMonthAndYear()}:</p>
 
             <p className="mt-4 text-gray-800">{gratitudes}  gratitudes reçues</p>
             <p className="mt-2 text-gray-800">{ticketZone} tickets zone restants</p>
