@@ -51,7 +51,7 @@ export default function Ticketsrecus() {
 
                 if (userDocSnapshot.exists()) {
                     // Récupérer la valeur du champ 'total_gratitude'
-                    const total = userDocSnapshot.data().total_gratitude;
+                    const total = userDocSnapshot.data().total_gratitudes;
                     settotalGratitudes(total)
                 } else {
                     console.log("Aucun document trouvé pour cet utilisateur.");
