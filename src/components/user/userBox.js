@@ -26,22 +26,22 @@ function UserBox() {
     const [ticketHorsZone, setTicketHorsZone] = useState(0);
 
     // récupérer la zone utilisateur
-    useEffect(() => {      
+    useEffect(() => {
         if (user && user.uid) {
-          const userDocRef = doc(db, 'utilisateurs', user.uid);
-      
-          getDoc(userDocRef).then((docSnapshot) => {
-            if (docSnapshot.exists()) {
-              setZone(docSnapshot.data().zone || null);
-            } else {
-              console.error('Document utilisateur non trouvé.');
-            }
-          }).catch((error) => {
-            console.error('Erreur lors de la récupération de la zone de l\'utilisateur:', error);
-          });
+            const userDocRef = doc(db, 'utilisateurs', user.uid);
+
+            getDoc(userDocRef).then((docSnapshot) => {
+                if (docSnapshot.exists()) {
+                    setZone(docSnapshot.data().zone || null);
+                } else {
+                    console.error('Document utilisateur non trouvé.');
+                }
+            }).catch((error) => {
+                console.error('Erreur lors de la récupération de la zone de l\'utilisateur:', error);
+            });
         }
-      }, [user]);
-      
+    }, [user]);
+
 
     //mise à jour des tikcets restants 
     useEffect(() => {
@@ -195,6 +195,17 @@ function UserBox() {
         }
     };
 
+    function CurrentMonthAndYear() {
+        const date = new Date();
+        const options = { year: 'numeric', month: 'long' };
+        let formattedDate = date.toLocaleDateString('fr-FR', options);
+        
+        // Mettre la première lettre en majuscule
+        formattedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+
+        return formattedDate
+    }
+
     return (
         <div className="flex flex-col mt-10 items-center pb-10">
             {/* user photo */}
@@ -266,6 +277,8 @@ function UserBox() {
                 </span>
             )} */}
             <p className="text-sm text-gray-500">Zone {zone}</p>
+
+            <p className="mt-4 text-gray-800">{CurrentMonthAndYear()}:</p>
 
             <p className="mt-4 text-gray-800">{gratitudes}  gratitudes reçues</p>
             <p className="mt-2 text-gray-800">{ticketZone} tickets zone restants</p>

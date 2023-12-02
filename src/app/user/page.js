@@ -104,6 +104,17 @@ function UserPage() {
   }, []);
 
 
+  //mois en cours
+  function CurrentMonthAndYear() {
+    const date = new Date();
+    const options = { year: 'numeric', month: 'long' };
+    let formattedDate = date.toLocaleDateString('fr-FR', options);
+
+    // Mettre la première lettre en majuscule
+    formattedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+
+    return formattedDate
+  }
 
 
 
@@ -168,7 +179,7 @@ function UserPage() {
 
             {/* gratitude heroes*/}
             <div className="border-t p-2 border-b pb-4 mt-4">
-              <p className="font-bold text-lg">Gratitude Heroes 🏆</p>
+              <p> <span className="font-bold text-lg">Gratitude Heroes 🏆 </span>({CurrentMonthAndYear()})</p>
             </div>
 
             {/*TOP 3*/}

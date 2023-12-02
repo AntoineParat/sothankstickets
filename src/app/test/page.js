@@ -35,12 +35,25 @@ export default function HomePage() {
         });
     }
 
+    function CurrentMonthAndYear() {
+        const date = new Date();
+        const options = { year: 'numeric', month: 'long' };
+        let formattedDate = date.toLocaleDateString('fr-FR', options);
+        
+        // Mettre la première lettre en majuscule
+        formattedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+
+        return formattedDate
+    }
+
 
 
     return (
         <div>
             <button onClick={showNotification}>Vérifier les tickets</button>
             <button onClick={pushNotification}>notification</button>
+            <p className="mt-4 text-gray-800">{CurrentMonthAndYear()}:</p>
+
         </div>
     );
 }
